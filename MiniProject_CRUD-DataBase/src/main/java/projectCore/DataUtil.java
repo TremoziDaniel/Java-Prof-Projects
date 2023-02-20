@@ -67,4 +67,15 @@ public class DataUtil {
             return position;
         }
     }
+
+    public static Position getPosition(String value) {
+        try {
+            Position position = Position.valueOf(value.toUpperCase());
+            return position;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: Position not found.\nType {BOSS, ASSISTANT, ENGINEER}");
+            Position position = getPosition();
+            return position;
+        }
+    }
 }

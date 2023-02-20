@@ -3,9 +3,9 @@ package projectCore;
  * Java CRUD DataBase
  *
  * @author Danil Izmajlov
- * @version 0.1
+ * @version 0.2
  * 26.01.2023
- * Tel-Ran
+     * Tel-Ran
  * */
 public class ApplicationRun {
     public static void main(String[] args) {

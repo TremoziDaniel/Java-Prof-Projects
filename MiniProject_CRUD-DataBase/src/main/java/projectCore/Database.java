@@ -17,6 +17,10 @@ public class Database {
         }
     }
 
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
     public void create() {
         Employee employee = DataUtil.getEmployee("Create employee");
         if (employee != null) {
@@ -114,5 +118,13 @@ public class Database {
                 System.out.println("Error! Irregular input. Write [n]ame, [a]ge or [s]alary");
                 return;
         }
+    }
+
+    public void load() {
+
+    }
+
+    public void save() {
+
     }
 }

@@ -4,9 +4,9 @@ import java.util.Scanner;
 
 public class CommandLine {
     public void exec() {
-        Database db = new Database(DBInit.init());
+        Database db = new Database(DBInit.read());
         Scanner scanner = new Scanner(System.in);
-        System.out.println("CRUD-DB-v0.1");
+        System.out.println("\nCRUD-DB-v0.3");
         while(true) {
             System.out.print("# ");
             String cmd = scanner.next();
@@ -33,6 +33,8 @@ public class CommandLine {
                     db.sort();
                     break;
                 case 'x':
+                    DBInit.save(db.getEmployees());
+                    System.out.println("Database has been successfully saved.");
                     System.out.println("Finish / Exit of program");
                     return;
                 default:

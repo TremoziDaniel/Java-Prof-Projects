@@ -1,5 +1,7 @@
 package projectCore;
 
+import java.util.HashSet;
+
 public class Employee {
     private int id;
     private String name;
@@ -7,6 +9,7 @@ public class Employee {
     private double salary;
     private int age;
     private static int count = 0;
+    private static HashSet<Integer> idSet = new HashSet<Integer>();
 
     public Employee(String name, Position position, double salary, int age) {
         this.name = name;
@@ -14,6 +17,15 @@ public class Employee {
         this.salary = salary;
         this.age = age;
         this.id = ++count;
+    }
+
+    public Employee(int id, String name, Position position, double salary, int age) {
+        this.name = name;
+        this.position = position;
+        this.salary = salary;
+        this.age = age;
+        this.id = id;
+        count = count < id ? id : count;
     }
 
     public String getName() {return name;}
@@ -42,7 +54,7 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee №" + id + "\n" +
+        return "Employee " + id +
                 "{name='" + name + '\'' +
                 ", position='" + position + '\'' +
                 ", salary=" + salary +
