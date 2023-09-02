@@ -100,7 +100,6 @@ public class Database {
             case 'n':
                 comparator = (Employee o1, Employee o2) ->
                         o1.getName().compareTo(o2.getName());
-                ;
                 break;
             case 'p':
                 comparator = (Employee o1, Employee o2) ->
@@ -116,15 +115,10 @@ public class Database {
                 break;
             default:
                 System.out.println("Error! Irregular input. Write [n]ame, [a]ge or [s]alary");
-                return;
         }
     }
 
-    public void load() {
-
-    }
-
-    public void save() {
+    public void find() {
 
     }
 }
