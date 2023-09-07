@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-/*
+
 @Entity
 @Table(name="users")
 public class User {
@@ -22,7 +22,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private Role role;
+    private String role;
 
     private LocalDateTime creationDate;
 
@@ -35,4 +35,4 @@ public class User {
     @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name="accounts", referencedColumnName = "id")
     private List<Account> accounts = new ArrayList<>();
-}*/
+}

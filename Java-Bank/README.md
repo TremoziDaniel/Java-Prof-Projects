@@ -12,5 +12,6 @@ Simple bank application with ability to manage accounts, transfer money between 
   - see their own accounts and transactions
   - can use operations of spending, manage accounts
   - can top up their account from virtual cash machine
+- ...
 
 Note:[Markdown Cheatsheet]()

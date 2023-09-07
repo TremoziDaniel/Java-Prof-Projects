@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-/*
+
 @Entity
 @Table(name="accounts")
 public class Account {
@@ -25,4 +25,4 @@ public class Account {
     private List<Transaction> transactions = new ArrayList<>();
 
     private LocalDateTime creationDate;
-}*/
+}

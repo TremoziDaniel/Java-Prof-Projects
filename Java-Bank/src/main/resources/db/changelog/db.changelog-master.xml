@@ -134,8 +134,8 @@
     
     <changeSet id="sql_query" author="Daniel"/>
 
-    <changeSet id="Test table" author="Daniel">
-        <createTable tableName="Error">
+    <changeSet id="Error table" author="Daniel">
+        <createTable tableName="error">
             <column name="time_stamp" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>

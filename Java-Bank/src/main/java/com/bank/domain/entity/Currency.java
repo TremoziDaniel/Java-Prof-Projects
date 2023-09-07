@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-/*
+
 @Entity
 public class Currency {
 
@@ -17,4 +17,4 @@ public class Currency {
     private String currencyAbb;
 
     private Double rate;
-}*/
+}

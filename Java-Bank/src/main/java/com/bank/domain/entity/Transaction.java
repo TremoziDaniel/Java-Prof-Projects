@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
-/*
+
 @Entity
 public class Transaction {
 
@@ -34,4 +34,4 @@ public class Transaction {
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name="currency_id", referencedColumnName = "id")
     private Currency currency;
-}*/
+}
