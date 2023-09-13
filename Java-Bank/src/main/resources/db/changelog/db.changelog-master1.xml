@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="personal" author="Daniel">
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="user_id_pk"/>
+            </column>
+            <column name="role" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_date" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="info_id" type="bigint"/>
+            <!--<column name="accounts" type="bigint[]"/>-->
+        </createTable>
+        
+        <createTable tableName="accounts">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="account_id_pk"/>
+            </column>
+            <column name="money_amount" type="numeric(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency_id" type="bigint"/>
+            <!--<column name="transactions" type="bigint[]"/>-->
+            <column name="creation_date" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <createTable tableName="info">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"  nullable="false" primaryKeyName="info_id_pk"/>
+            </column>
+            <column name="first_name" type="varchar(255)"/>
+            <column name="last_name" type="varchar(255)"/>
+            <column name="country" type="varchar(255)"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="street" type="varchar(255)"/>
+            <column name="house_number" type="varchar(255)"/>
+            <column name="apartment_number" type="int"/>
+            <column name="phone_number" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="currencies">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="currency_id_pk"/>
+            </column>
+            <column name="currency_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency_abb" type="varchar(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rate" type="numeric(15,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="operation" author="Daniel">
+        <createTable tableName="transactions">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="transaction_id_pk"/>
+            </column>
+            <column name="complete_time" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_type" type="varchar(255)"/>
+            <column name="account_id_from" type="bigint"/>
+            <column name="account_id_to" type="bigint"/>
+            <column name="money_transacted" type="numeric(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency_id" type="bigint"/>
+            <!--<column name="status" type="boolean" defaultValue="0"/>-->
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="fk_announcement" author="Daniel">
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="info_id"
+                                 constraintName="users_info_fk" referencedTableName="info"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="accounts" baseColumnNames="currency_id"
+                                 constraintName="account_currency_fk" referencedTableName="currencies"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="transactions" baseColumnNames="account_id_from"
+                                 constraintName="account_id_from_transaction_fk" referencedTableName="accounts"
+                                 referencedColumnNames="id" onDelete="RESTRICT" onUpdate="RESTRICT"/>
+
+        <addForeignKeyConstraint baseTableName="transactions" baseColumnNames="account_id_to"
+                                 constraintName="account_id_to_transaction_fk" referencedTableName="accounts"
+                                 referencedColumnNames="id" onDelete="RESTRICT" onUpdate="RESTRICT"/>
+
+        <addForeignKeyConstraint baseTableName="transactions" baseColumnNames="currency_id"
+                                 constraintName="transaction_currency_fk" referencedTableName="currencies"
+                                 referencedColumnNames="id"/>
+
+        <!--<addForeignKeyConstraint baseTableName="users" baseColumnNames="accounts"
+                                 constraintName="users_accounts_fk" referencedTableName="accounts"
+                                 referencedColumnNames="id" onDelete="RESTRICT"/>-->
+        <!--<addForeignKeyConstraint baseTableName="Currency" baseColumnNames="currency_id"
+                                 constraintName="fk_transaction_currency" referencedTableName="Transaction"
+                                 referencedColumnNames="currency_id" onDelete="RESTRICT" onUpdate="CASCADE"/>-->
+        <!--<sql dbms="postgresql">
+                ALTER TABLE "Account"
+                ADD CONSTRAINT fk_account_transaction
+                FOREIGN KEY (transactions) REFERENCES "Transaction"(transaction_id)
+                ON DELETE CASCADE ON UPDATE RESTRICT
+        </sql>-->
+    </changeSet>
+    
+    <changeSet id="sql_query" author="Daniel"/>
+
+    <!--changeSet id="Error table" author="Daniel">
+        <createTable tableName="error">
+            <column name="time_stamp" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="problems" type="varchar(255) []"/>
+        </createTable>
+    </changeSet-->
+</databaseChangeLog>

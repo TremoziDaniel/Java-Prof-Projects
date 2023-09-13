@@ -4,8 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "currencies")
 public class Currency {
 
     @Id
@@ -17,4 +19,56 @@ public class Currency {
     private String currencyAbb;
 
     private Double rate;
+
+    public Currency() {
+    }
+
+    public Currency(long id, String currencyName, String currencyAbb, Double rate) {
+        this.id = id;
+        this.currencyName = currencyName;
+        this.currencyAbb = currencyAbb;
+        this.rate = rate;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getCurrencyName() {
+        return currencyName;
+    }
+
+    public void setCurrencyName(String currencyName) {
+        this.currencyName = currencyName;
+    }
+
+    public String getCurrencyAbb() {
+        return currencyAbb;
+    }
+
+    public void setCurrencyAbb(String currencyAbb) {
+        this.currencyAbb = currencyAbb;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public void setRate(Double rate) {
+        this.rate = rate;
+    }
+
+    @Override
+    public String toString() {
+        return "Currency{" +
+                "id=" + id +
+                ", currencyName='" + currencyName + '\'' +
+                ", currencyAbb='" + currencyAbb + '\'' +
+                ", rate=" + rate +
+                '}';
+    }
 }
