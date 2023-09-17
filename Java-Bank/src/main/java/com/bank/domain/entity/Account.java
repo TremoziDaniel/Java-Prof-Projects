@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class Account {
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
-    private Double balance;
+    private BigDecimal balance;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "transactions", referencedColumnName = "id")
@@ -50,7 +51,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(UUID id, Client client, int type, boolean status, Currency currency, Double balance,
+    public Account(UUID id, Client client, int type, boolean status, Currency currency, BigDecimal balance,
                    List<Transaction> transactions, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.client = client;
@@ -103,11 +104,11 @@ public class Account {
         this.currency = currency;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

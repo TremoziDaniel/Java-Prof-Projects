@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,7 +36,7 @@ public class Agreement {
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
-    private Double sum;
+    private BigDecimal sum;
 
     private LocalDateTime createdAt;
 
@@ -45,7 +46,7 @@ public class Agreement {
     }
 
     public Agreement(long id, Account account, Product product, Double interestRate, boolean status,
-                     Currency currency, Double sum, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                     Currency currency, BigDecimal sum, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.account = account;
         this.product = product;
@@ -105,11 +106,11 @@ public class Agreement {
         this.currency = currency;
     }
 
-    public Double getSum() {
+    public BigDecimal getSum() {
         return sum;
     }
 
-    public void setSum(Double sum) {
+    public void setSum(BigDecimal sum) {
         this.sum = sum;
     }
 

@@ -28,8 +28,6 @@ public class Manager {
 
     private boolean status;
 
-    private String role;
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -41,12 +39,11 @@ public class Manager {
     public Manager() {
     }
 
-    public Manager(long id, Info info, boolean status, String role, LocalDateTime createdAt,
+    public Manager(long id, Info info, boolean status, LocalDateTime createdAt,
                    LocalDateTime updatedAt, List<Account> accounts) {
         this.id = id;
         this.info = info;
         this.status = status;
-        this.role = role;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.accounts = accounts;
@@ -74,14 +71,6 @@ public class Manager {
 
     public void setStatus(boolean status) {
         this.status = status;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -114,7 +103,6 @@ public class Manager {
                 "id=" + id +
                 ", info=" + info +
                 ", status=" + status +
-                ", role='" + role + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", accounts=" + accounts +

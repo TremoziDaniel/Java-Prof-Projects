@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "currencies")
@@ -18,12 +19,12 @@ public class Currency {
 
     private String currencyAbb;
 
-    private Double rate;
+    private BigDecimal rate;
 
     public Currency() {
     }
 
-    public Currency(long id, String currencyName, String currencyAbb, Double rate) {
+    public Currency(long id, String currencyName, String currencyAbb, BigDecimal rate) {
         this.id = id;
         this.currencyName = currencyName;
         this.currencyAbb = currencyAbb;
@@ -54,11 +55,11 @@ public class Currency {
         this.currencyAbb = currencyAbb;
     }
 
-    public Double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(Double rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 

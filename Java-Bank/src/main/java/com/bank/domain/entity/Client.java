@@ -2,16 +2,10 @@ package com.bank.domain.entity;
 
 import org.hibernate.annotations.GeneratorType;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -38,6 +32,10 @@ public class Client {
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "accounts", referencedColumnName = "id")
+    private List<Account> accounts = new ArrayList<>();
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -46,13 +44,14 @@ public class Client {
     }
 
     public Client(UUID id, Manager manager, boolean status, String taxCode, Info info,
-                  Currency currency, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                  Currency currency, List<Account> accounts, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.manager = manager;
         this.status = status;
         this.taxCode = taxCode;
         this.info = info;
         this.currency = currency;
+        this.accounts = accounts;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -105,6 +104,14 @@ public class Client {
         this.currency = currency;
     }
 
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -130,6 +137,7 @@ public class Client {
                 ", taxCode='" + taxCode + '\'' +
                 ", info=" + info +
                 ", currency=" + currency +
+                ", accounts=" + accounts +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
