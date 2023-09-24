@@ -14,11 +14,12 @@ import java.util.UUID;
 @Service
 public class AccountSeviceImpl implements AccountService {
 
+    // Ask about required services, their validity(update, remove etc), return type
     @Autowired
     private AccountRepository repository;
 
     @Autowired
-    private CurrencyRepository currencyRepository;
+    private CurrencyService currencyService;
 
     @Override
     public List<Account> getAll() {
@@ -60,10 +61,11 @@ public class AccountSeviceImpl implements AccountService {
     }
 
     @Override
-    public Account changeCurrency(long currencyID, String id) {
+    public Account changeCurrency(String id, long currencyID) {
         Account account = getById(id);
-        account.setCurrency(currencyRepository.findById(currencyID).get());
-        return null;
+        account.setCurrency(currencyService.getById(currencyID));
+
+        return account;
     }
 
     @Override

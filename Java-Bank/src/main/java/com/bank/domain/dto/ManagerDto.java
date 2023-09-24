@@ -1,27 +1,12 @@
-package com.bank.domain.entity;
+package com.bank.domain.dto;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
-@Table(name = "managers")
-public class Manager {
+public class ManagerDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "personal_data_id", referencedColumnName = "id")
-    private PersonalData personalData;
 
     private boolean status;
 
@@ -29,13 +14,12 @@ public class Manager {
 
     private LocalDateTime updatedAt;
 
-    public Manager() {
+    public ManagerDto() {
     }
 
-    public Manager(long id, PersonalData personalData, boolean status,
-                   LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ManagerDto(long id, boolean status,
+                      LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.personalData = personalData;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -47,14 +31,6 @@ public class Manager {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public PersonalData getInfo() {
-        return personalData;
-    }
-
-    public void setInfo(PersonalData personalData) {
-        this.personalData = personalData;
     }
 
     public boolean isStatus() {
@@ -83,9 +59,8 @@ public class Manager {
 
     @Override
     public String toString() {
-        return "Manager{" +
+        return "ManagerDto{" +
                 "id=" + id +
-                ", personalData=" + personalData +
                 ", status=" + status +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

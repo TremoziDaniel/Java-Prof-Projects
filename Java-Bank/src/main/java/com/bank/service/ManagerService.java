@@ -15,7 +15,7 @@ public interface ManagerService {
 
     public Manager update(long id, Manager manager);
 
-    public List<Account> getAccounts(long id);
-
     public void delete(long id);
+
+    public void changeStatus(long id);
 }

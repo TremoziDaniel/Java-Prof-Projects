@@ -40,7 +40,7 @@
             </column>
         </createTable>
         
-        <createTable tableName="info">
+        <createTable tableName="personalData">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"  nullable="false" primaryKeyName="info_id_pk"/>
             </column>
@@ -99,7 +99,7 @@
     
     <changeSet id="fk_announcement" author="Daniel">
         <addForeignKeyConstraint baseTableName="users" baseColumnNames="info_id"
-                                 constraintName="users_info_fk" referencedTableName="info"
+                                 constraintName="users_info_fk" referencedTableName="personalData"
                                  referencedColumnNames="id"/>
 
         <addForeignKeyConstraint baseTableName="accounts" baseColumnNames="currency_id"

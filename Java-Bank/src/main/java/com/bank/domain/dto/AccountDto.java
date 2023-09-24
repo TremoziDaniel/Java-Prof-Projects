@@ -1,68 +1,42 @@
-package com.bank.domain.entity;
+package com.bank.domain.dto;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import com.bank.domain.entity.Currency;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.UUID;
 
-@Entity
-@Table(name = "accounts")
-public class Account {
+public class AccountDto {
 
-    // Ask about Columns params(unique, nullable etc), enums, iban, tables(info)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // Ask about needed fields, security
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "client_id", referencedColumnName = "id")
-    private Client client;
+    private ClientDto client;
 
     private String name;
 
-    // What does it mean?
-    //private int type;
-
     private boolean status;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
     private BigDecimal balance;
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "transactions", referencedColumnName = "id")
-    private List<Transaction> transactions = new ArrayList<>();
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    public Account() {
+    public AccountDto() {
     }
 
-    public Account(UUID id, Client client, String name, boolean status, Currency currency, BigDecimal balance,
-                   List<Transaction> transactions, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public AccountDto(UUID id, ClientDto client, String name, boolean status, Currency currency,
+                      BigDecimal balance, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.client = client;
         this.name = name;
         this.status = status;
         this.currency = currency;
         this.balance = balance;
-        this.transactions = transactions;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -75,11 +49,11 @@ public class Account {
         this.id = id;
     }
 
-    public Client getClient() {
+    public ClientDto getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
+    public void setClient(ClientDto client) {
         this.client = client;
     }
 
@@ -115,14 +89,6 @@ public class Account {
         this.balance = balance;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -141,14 +107,13 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account{" +
+        return "AccountDto{" +
                 "id=" + id +
                 ", client=" + client +
-                ", name=" + name +
+                ", name='" + name + '\'' +
                 ", status=" + status +
                 ", currency=" + currency +
                 ", balance=" + balance +
-                ", transactions=" + transactions +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

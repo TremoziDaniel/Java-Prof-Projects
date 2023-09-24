@@ -1,49 +1,36 @@
-package com.bank.domain.entity;
+package com.bank.domain.dto;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
-@Table(name = "clients")
-public class Client {
+public class ClientDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "manager_id", referencedColumnName = "id")
-    private Manager manager;
+    private ManagerDto manager;
 
     private boolean status;
 
     private String taxCode;
 
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "personal_data_id", referencedColumnName = "id")
-    private PersonalData personalData;
-
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    //@JoinColumn(name = "accounts", referencedColumnName = "id")
-    private List<Account> accounts = new ArrayList<>();
+    private List<AccountDto> accounts = new ArrayList<>();
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    public Client() {
+    public ClientDto() {
     }
 
-    public Client(UUID id, Manager manager, boolean status, String taxCode, PersonalData personalData,
-                  List<Account> accounts, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ClientDto(UUID id, ManagerDto manager, boolean status, String taxCode,
+                     List<AccountDto> accounts, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.manager = manager;
         this.status = status;
         this.taxCode = taxCode;
-        this.personalData = personalData;
         this.accounts = accounts;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -57,11 +44,11 @@ public class Client {
         this.id = id;
     }
 
-    public Manager getManager() {
+    public ManagerDto getManager() {
         return manager;
     }
 
-    public void setManager(Manager manager) {
+    public void setManager(ManagerDto manager) {
         this.manager = manager;
     }
 
@@ -81,19 +68,11 @@ public class Client {
         this.taxCode = taxCode;
     }
 
-    public PersonalData getInfo() {
-        return personalData;
-    }
-
-    public void setInfo(PersonalData personalData) {
-        this.personalData = personalData;
-    }
-
-    public List<Account> getAccounts() {
+    public List<AccountDto> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(List<Account> accounts) {
+    public void setAccounts(List<AccountDto> accounts) {
         this.accounts = accounts;
     }
 
@@ -115,12 +94,11 @@ public class Client {
 
     @Override
     public String toString() {
-        return "Client{" +
+        return "ClientDto{" +
                 "id=" + id +
                 ", manager=" + manager +
                 ", status=" + status +
                 ", taxCode='" + taxCode + '\'' +
-                ", personalData=" + personalData +
                 ", accounts=" + accounts +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

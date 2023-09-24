@@ -39,12 +39,14 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public List<Account> getAccounts(long id) {
-        return getById(id).getAccounts();
+    public void delete(long id) {
+        repository.deleteById(id);
     }
 
     @Override
-    public void delete(long id) {
-        repository.deleteById(id);
+    public void changeStatus(long id) {
+        Manager manager = getById(id);
+        manager.setStatus(!manager.isStatus());
+        repository.save(manager);
     }
 }

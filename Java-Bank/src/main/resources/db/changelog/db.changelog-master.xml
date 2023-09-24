@@ -6,7 +6,7 @@
 
     <changeSet id="personal" author="Danil">
         <createTable tableName="clients">
-            <column name="id" type="binary(16)" autoIncrement="true">
+            <column name="id" type="binary(16)">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="client_pk"/>
             </column>
             <column name="manager_id" type="bigint"/>
@@ -14,7 +14,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="tax_code" type="varchar(20)"/>
-            <column name="info_id" type="bigint"/>
+            <column name="personal_data_id" type="bigint"/>
             <column name="currency_id" type="bigint"/>
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
@@ -28,7 +28,7 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="manager_pk"/>
             </column>
-            <column name="info_id" type="bigint"/>
+            <column name="personal_data_id" type="bigint"/>
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
             </column>
@@ -40,7 +40,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="info">
+        <createTable tableName="personal_data">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"  nullable="false" primaryKeyName="info_pk"/>
             </column>
@@ -50,8 +50,8 @@
             <column name="city" type="varchar(255)"/>
             <column name="street" type="varchar(255)"/>
             <column name="house_number" type="varchar(10)"/>
-            <column name="apartment_number" type="int(10)"/>
-            <column name="phone_number" type="bigint(15)">
+            <column name="apartment_number" type="int"/>
+            <column name="phone_number" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="email" type="varchar(255)">
@@ -80,11 +80,11 @@
 
     <changeSet id="operational" author="Danil">
         <createTable tableName="accounts">
-            <column name="id" type="binary(16)" autoIncrement="true">
+            <column name="id" type="binary(16)">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="account_pk"/>
             </column>
             <column name="client_id" type="binary(16)"/>
-            <column name="type" type="int"/>
+            <!--column name="type" type="int"/-->
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
             </column>
@@ -104,8 +104,8 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="transaction_pk"/>
             </column>
-            <column name="debit_account_id" type="bigint"/>
-            <column name="credit_account_id" type="bigint"/>
+            <column name="debit_account_id" type="binary(16)"/>
+            <column name="credit_account_id" type="binary(16)"/>
             <column name="type" type="varchar(12)"/>
             <column name="currency_id" type="bigint"/>
             <column name="amount" type="numeric(15,2)">
@@ -143,7 +143,7 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="agreement_pk"/>
             </column>
-            <column name="account_id" type="bigint"/>
+            <column name="account_id" type="binary(16)"/>
             <column name="product_id" type="bigint"/>
             <column name="interest_rate" type="numeric(6,4)">
                 <constraints nullable="false"/>
@@ -163,4 +163,64 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="foreign_keys" author="Daniel">
+        <addForeignKeyConstraint baseTableName="clients" baseColumnNames="manager_id"
+                                 constraintName="client_manager_fk" referencedTableName="managers"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="clients" baseColumnNames="personal_data_id"
+                                 constraintName="client_personal_data_fk" referencedTableName="personal_data"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="clients" baseColumnNames="currency_id"
+                                 constraintName="client_currency_fk" referencedTableName="currencies"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="managers" baseColumnNames="personal_data_id"
+                                 constraintName="manager_personal_data_fk" referencedTableName="personal_data"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="accounts" baseColumnNames="client_id"
+                                 constraintName="account_client_fk" referencedTableName="clients"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="accounts" baseColumnNames="currency_id"
+                                 constraintName="account_currency_fk" referencedTableName="currencies"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="transactions" baseColumnNames="debit_account_id"
+                                 constraintName="debit_account_transaction_fk" referencedTableName="accounts"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="transactions" baseColumnNames="credit_account_id"
+                                 constraintName="credit_account_transaction_fk" referencedTableName="accounts"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="transactions" baseColumnNames="currency_id"
+                                 constraintName="transaction_currency_fk" referencedTableName="currencies"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="products" baseColumnNames="manager_id"
+                                 constraintName="product_manager_fk" referencedTableName="managers"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="products" baseColumnNames="currency_id"
+                                 constraintName="product_currency_fk" referencedTableName="currencies"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="agreements" baseColumnNames="account_id"
+                                 constraintName="agreement_account_fk" referencedTableName="accounts"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="agreements" baseColumnNames="product_id"
+                                 constraintName="agreement_product_fk" referencedTableName="products"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="agreements" baseColumnNames="currency_id"
+                                 constraintName="agreement_currency_fk" referencedTableName="currencies"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="sql_query" author="Daniel"/>
 </databaseChangeLog>

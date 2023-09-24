@@ -21,7 +21,7 @@ public interface AccountService {
 
     public void changeStatus(String id);
 
-    public Account changeCurrency(long currencyID, String id);
+    public Account changeCurrency(String id, long currencyID);
 
     public Account topUp(String id, BigDecimal amount);
 }

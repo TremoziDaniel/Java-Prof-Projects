@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Info {
+public class PersonalData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -25,15 +25,17 @@ public class Info {
 
     private int apartmentNumber;
 
+    private long phoneNumber;
+
     private String email;
 
     private String password;
 
-    public Info() {
+    public PersonalData() {
     }
 
-    public Info(long id, String firstName, String lastName, String country, String city, String street,
-                String houseNumber, int apartmentNumber, String email, String password) {
+    public PersonalData(long id, String firstName, String lastName, String country, String city, String street,
+                        String houseNumber, int apartmentNumber, long phoneNumber, String email, String password) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -42,6 +44,7 @@ public class Info {
         this.street = street;
         this.houseNumber = houseNumber;
         this.apartmentNumber = apartmentNumber;
+        this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
     }
@@ -110,6 +113,14 @@ public class Info {
         this.apartmentNumber = apartmentNumber;
     }
 
+    public long getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(long phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -137,6 +148,7 @@ public class Info {
                 ", street='" + street + '\'' +
                 ", houseNumber='" + houseNumber + '\'' +
                 ", apartmentNumber=" + apartmentNumber +
+                ", phoneNumber=" + phoneNumber +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
