@@ -1,6 +1,6 @@
 package com.bank.domain.enums;
 
 public enum TransactionType {
-    TRANSFER,
+    PERSONAL,
     CREDIT
 }

@@ -25,7 +25,7 @@ public class PersonalData {
 
     private int apartmentNumber;
 
-    private long phoneNumber;
+    private String phoneNumber;
 
     private String email;
 
@@ -35,7 +35,7 @@ public class PersonalData {
     }
 
     public PersonalData(long id, String firstName, String lastName, String country, String city, String street,
-                        String houseNumber, int apartmentNumber, long phoneNumber, String email, String password) {
+                        String houseNumber, int apartmentNumber, String phoneNumber, String email, String password) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -113,11 +113,11 @@ public class PersonalData {
         this.apartmentNumber = apartmentNumber;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -148,7 +148,7 @@ public class PersonalData {
                 ", street='" + street + '\'' +
                 ", houseNumber='" + houseNumber + '\'' +
                 ", apartmentNumber=" + apartmentNumber +
-                ", phoneNumber=" + phoneNumber +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';

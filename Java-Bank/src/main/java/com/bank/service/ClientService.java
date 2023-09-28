@@ -3,6 +3,7 @@ package com.bank.service;
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Manager;
+import com.bank.domain.entity.PersonalData;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface ClientService {
     public List<Account> getAccounts(String id);
 
     public void changeStatus(String id);
+
+    public PersonalData getPersonalData(String id);
 }

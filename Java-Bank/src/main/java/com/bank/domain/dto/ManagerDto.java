@@ -8,6 +8,8 @@ public class ManagerDto {
 
     private long id;
 
+    private PersonalDataDto personalData;
+
     private boolean status;
 
     private LocalDateTime createdAt;
@@ -17,9 +19,9 @@ public class ManagerDto {
     public ManagerDto() {
     }
 
-    public ManagerDto(long id, boolean status,
-                      LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ManagerDto(long id, PersonalDataDto personalData, boolean status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
+        this.personalData = personalData;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -31,6 +33,14 @@ public class ManagerDto {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public PersonalDataDto getPersonalData() {
+        return personalData;
+    }
+
+    public void setPersonalData(PersonalDataDto personalData) {
+        this.personalData = personalData;
     }
 
     public boolean isStatus() {
@@ -61,6 +71,7 @@ public class ManagerDto {
     public String toString() {
         return "ManagerDto{" +
                 "id=" + id +
+                ", personalData=" + personalData +
                 ", status=" + status +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

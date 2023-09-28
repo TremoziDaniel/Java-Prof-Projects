@@ -15,7 +15,6 @@
             </column>
             <column name="tax_code" type="varchar(20)"/>
             <column name="personal_data_id" type="bigint"/>
-            <column name="currency_id" type="bigint"/>
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
@@ -51,11 +50,11 @@
             <column name="street" type="varchar(255)"/>
             <column name="house_number" type="varchar(10)"/>
             <column name="apartment_number" type="int"/>
-            <column name="phone_number" type="bigint">
-                <constraints nullable="false"/>
+            <column name="phone_number" type="varchar(16)">
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="email" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="password" type="varchar(30)">
                 <constraints nullable="false"/>
@@ -67,10 +66,10 @@
                 <constraints primaryKey="true" nullable="false" primaryKeyName="currency_pk"/>
             </column>
             <column name="currency_name" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="currency_abb" type="varchar(3)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="rate" type="numeric(15,2)">
                 <constraints nullable="false"/>
@@ -84,12 +83,11 @@
                 <constraints primaryKey="true" nullable="false" primaryKeyName="account_pk"/>
             </column>
             <column name="client_id" type="binary(16)"/>
-            <!--column name="type" type="int"/-->
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
             </column>
             <column name="currency_id" type="bigint"/>
-            <column name="balance" type="numeric(15,2)">
+            <column name="balance" type="numeric(15,2)" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
@@ -104,9 +102,9 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="transaction_pk"/>
             </column>
-            <column name="debit_account_id" type="binary(16)"/>
             <column name="credit_account_id" type="binary(16)"/>
-            <column name="type" type="varchar(12)"/>
+            <column name="debit_account_id" type="binary(16)"/>
+            <column name="type" type="varchar(20)"/>
             <column name="currency_id" type="bigint"/>
             <column name="amount" type="numeric(15,2)">
                 <constraints nullable="false"/>
@@ -127,9 +125,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="currency_id" type="bigint"/>
-            <column name="interest_rate" type="numeric(6,4)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="interest_rate" type="numeric(6,4)" defaultValue="0"/>
             <column name="limit" type="int"/>
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
@@ -145,9 +141,7 @@
             </column>
             <column name="account_id" type="binary(16)"/>
             <column name="product_id" type="bigint"/>
-            <column name="interest_rate" type="numeric(6,4)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="interest_rate" type="numeric(6,4)" defaultValue="0"/>
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
             </column>
@@ -171,10 +165,6 @@
 
         <addForeignKeyConstraint baseTableName="clients" baseColumnNames="personal_data_id"
                                  constraintName="client_personal_data_fk" referencedTableName="personal_data"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint baseTableName="clients" baseColumnNames="currency_id"
-                                 constraintName="client_currency_fk" referencedTableName="currencies"
                                  referencedColumnNames="id"/>
 
         <addForeignKeyConstraint baseTableName="managers" baseColumnNames="personal_data_id"

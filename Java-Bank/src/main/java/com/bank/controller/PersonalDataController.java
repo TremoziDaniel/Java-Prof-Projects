@@ -36,19 +36,34 @@ public class PersonalDataController {
     }
 
     @PostMapping
-    public ResponseEntity<PersonalDataDto> create(@RequestBody PersonalData personalData) {
+    public ResponseEntity<PersonalDataDto> create(@RequestBody PersonalDataDto personalData) {
         return ResponseEntity.ok(
-                converter.toDto(service.create(personalData)));
+                converter.toDto(service.create(converter.toEntity(personalData))));
     }
 
     @PutMapping("/{id}")
     public PersonalDataDto update(@PathVariable("id") long id,
-                                  @RequestBody PersonalData personalData) {
-        return converter.toDto(service.update(id, personalData));
+                                  @RequestBody PersonalDataDto personalData) {
+        return converter.toDto(service.update(id, converter.toEntity(personalData)));
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") long id) {
         service.delete(id);
+    }
+
+    @GetMapping("/{id}/phoneNumber")
+    public String getPhoneNumber(@PathVariable("id") long id) {
+        return service.getPhoneNumber(id);
+    }
+
+    @GetMapping("/{id}/email")
+    public String getEmail(@PathVariable("id") long id) {
+        return service.getEmail(id);
+    }
+
+    @GetMapping("/{id}/password")
+    public String getPassword (@PathVariable("id") long id) {
+        return service.getPassword(id);
     }
 }

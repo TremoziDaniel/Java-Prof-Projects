@@ -81,11 +81,11 @@ public class Client {
         this.taxCode = taxCode;
     }
 
-    public PersonalData getInfo() {
+    public PersonalData getPersonalData() {
         return personalData;
     }
 
-    public void setInfo(PersonalData personalData) {
+    public void setPersonalData(PersonalData personalData) {
         this.personalData = personalData;
     }
 

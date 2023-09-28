@@ -1,9 +1,8 @@
 package com.bank.service;
 
 import com.bank.domain.entity.PersonalData;
-import com.bank.domain.exception.InvalidArgumentException;
+import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.repository.PersonalDataRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.List;
 @Service
 public class PersonalDataServiceImpl implements PersonalDataService {
 
-    @Autowired
-    private PersonalDataRepository repository;
+    private final PersonalDataRepository repository;
+
+    public PersonalDataServiceImpl(PersonalDataRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<PersonalData> getAll() {
@@ -21,7 +23,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public PersonalData getById(long id) {
-        return repository.findById(id).orElseThrow(() -> new InvalidArgumentException("Info"));
+        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Info"));
     }
 
     @Override
@@ -39,5 +41,20 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     @Override
     public void delete(long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public String getPhoneNumber(long id) {
+        return getById(id).getPhoneNumber();
+    }
+
+    @Override
+    public String getEmail(long id) {
+        return getById(id).getEmail();
+    }
+
+    @Override
+    public String getPassword(long id) {
+        return getById(id).getPassword();
     }
 }

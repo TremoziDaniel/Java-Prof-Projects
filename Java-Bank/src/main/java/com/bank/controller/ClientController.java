@@ -1,13 +1,16 @@
 package com.bank.controller;
 
 import com.bank.converter.EntityConverter;
+import com.bank.converter.PersonalDataConverter;
 import com.bank.domain.dto.AccountDto;
 import com.bank.domain.dto.ClientDto;
 import com.bank.domain.dto.ManagerDto;
+import com.bank.domain.dto.PersonalDataDto;
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Manager;
 import com.bank.service.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,17 +25,18 @@ public class ClientController {
 
     private final EntityConverter<Client, ClientDto> converter;
 
-    private final EntityConverter<Manager, ManagerDto> managerConverter;
+    @Autowired
+    private EntityConverter<Manager, ManagerDto> managerConverter;
 
-    private final EntityConverter<Account, AccountDto> accountConverter;
+    @Autowired
+    private EntityConverter<Account, AccountDto> accountConverter;
 
-    public ClientController(ClientService service, EntityConverter<Client,
-            ClientDto> converter, EntityConverter<Manager, ManagerDto> managerConverter,
-                            EntityConverter<Account, AccountDto> accountConverter) {
+    @Autowired
+    private PersonalDataConverter personalDataConverter;
+
+    public ClientController(ClientService service, EntityConverter<Client, ClientDto> converter) {
         this.service = service;
         this.converter = converter;
-        this.managerConverter = managerConverter;
-        this.accountConverter = accountConverter;
     }
 
     @GetMapping
@@ -47,14 +51,14 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<ClientDto> create(@RequestBody Client client) {
+    public ResponseEntity<ClientDto> create(@RequestBody ClientDto client) {
         return ResponseEntity.ok(
-                converter.toDto(service.create(client)));
+                converter.toDto(service.create(converter.toEntity(client))));
     }
 
     @PutMapping("/{id}")
-    public ClientDto update(@PathVariable("id") String id, @RequestBody Client client) {
-        return converter.toDto(service.update(id, client));
+    public ClientDto update(@PathVariable("id") String id, @RequestBody ClientDto client) {
+        return converter.toDto(service.update(id, converter.toEntity(client)));
     }
 
     @DeleteMapping("/{id}")
@@ -76,5 +80,10 @@ public class ClientController {
     @PatchMapping("changeStatus/{id}")
     public void changeStatus(@PathVariable("id") String id) {
         service.changeStatus(id);
+    }
+
+    @GetMapping("{id}/personalData")
+    public PersonalDataDto getPersonalData(@PathVariable("id") String id) {
+        return personalDataConverter.toDto(service.getById(id).getPersonalData());
     }
 }

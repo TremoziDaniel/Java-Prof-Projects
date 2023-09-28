@@ -3,6 +3,7 @@ package com.bank.domain.dto;
 import com.bank.domain.entity.Currency;
 import com.bank.domain.enums.TransactionType;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -10,15 +11,15 @@ public class TransactionDto {
 
     private long id;
 
-    private AccountDto debitAccount;
-
     private AccountDto creditAccount;
+
+    private AccountDto debitAccount;
 
     private TransactionType type;
 
     private Currency currency;
 
-    private Double amount;
+    private BigDecimal amount;
 
     private String description;
 
@@ -27,11 +28,11 @@ public class TransactionDto {
     public TransactionDto() {
     }
 
-    public TransactionDto(long id, AccountDto debitAccount, AccountDto creditAccount, TransactionType type,
-                          Currency currency, Double amount, String description, LocalDateTime completedAt) {
+    public TransactionDto(long id, AccountDto creditAccount, AccountDto debitAccount, TransactionType type,
+                          Currency currency, BigDecimal amount, String description, LocalDateTime completedAt) {
         this.id = id;
-        this.debitAccount = debitAccount;
         this.creditAccount = creditAccount;
+        this.debitAccount = debitAccount;
         this.type = type;
         this.currency = currency;
         this.amount = amount;
@@ -79,11 +80,11 @@ public class TransactionDto {
         this.currency = currency;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -107,8 +108,8 @@ public class TransactionDto {
     public String toString() {
         return "TransactionDto{" +
                 "id=" + id +
-                ", debitAccount=" + debitAccount +
                 ", creditAccount=" + creditAccount +
+                ", debitAccount=" + debitAccount +
                 ", type=" + type +
                 ", currency=" + currency +
                 ", amount=" + amount +

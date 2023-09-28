@@ -1,29 +1,37 @@
 package com.bank.converter;
 
 import com.bank.domain.dto.ClientDto;
+import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
+import com.bank.service.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class ClientConverter implements EntityConverter<Client, ClientDto>{
 
+    @Autowired
+    private ClientService service;
+
     @Override
     public ClientDto toDto(Client client) {
         return new ClientDto(client.getId(), new ManagerConverter().toDto(client.getManager()),
-                client.isStatus(), client.getTaxCode(), client.getAccounts().stream().map(o ->
-                        new AccountConverter().toDto(o)).collect(Collectors.toList()),
+                client.isStatus(), client.getTaxCode(), null/*client.getAccounts().stream().map(o ->
+                        new AccountConverter().toDto(o)).collect(Collectors.toList())*/,
                 client.getCreatedAt(), client.getUpdatedAt());
     }
 
     @Override
     public Client toEntity(ClientDto clientDto) {
         return new Client(clientDto.getId(), new ManagerConverter().toEntity(clientDto.getManager()),
-                clientDto.isStatus(), clientDto.getTaxCode(), null,
-                clientDto.getAccounts().stream().map(o ->
-                        new AccountConverter().toEntity(o)).collect(Collectors.toList()),
-                clientDto.getCreatedAt(), clientDto.getUpdatedAt()
-                );
+                clientDto.isStatus(), clientDto.getTaxCode(),
+                service.getById(clientDto.getId().toString()).getPersonalData(),
+                service.getAccounts(clientDto.getId().toString())
+                /*clientDto.getAccounts().stream().map(o ->
+                        new AccountConverter().toEntity(o)).collect(Collectors.toList())*/,
+                clientDto.getCreatedAt(), clientDto.getUpdatedAt());
     }
 }

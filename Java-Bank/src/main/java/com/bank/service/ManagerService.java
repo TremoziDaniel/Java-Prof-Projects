@@ -2,6 +2,7 @@ package com.bank.service;
 
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Manager;
+import com.bank.domain.entity.PersonalData;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface ManagerService {
     public void delete(long id);
 
     public void changeStatus(long id);
+
+    public PersonalData getPersonalData(long id);
 }

@@ -15,4 +15,10 @@ public interface PersonalDataService {
     public PersonalData update(long id, PersonalData personalData);
 
     public void delete(long id);
+
+    public String getPhoneNumber(long id);
+
+    public String getEmail(long id);
+
+    public String getPassword(long id);
 }

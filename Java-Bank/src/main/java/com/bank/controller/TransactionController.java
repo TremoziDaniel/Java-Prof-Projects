@@ -7,6 +7,7 @@ import com.bank.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,19 +37,26 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<TransactionDto> create(@RequestBody Transaction transaction) {
+    public ResponseEntity<TransactionDto> create(@RequestBody TransactionDto transaction) {
         return ResponseEntity.ok(
-                converter.toDto(service.create(transaction)));
+                converter.toDto(service.create(converter.toEntity(transaction))));
     }
 
     @PutMapping("/{id}")
     public TransactionDto update(@PathVariable("id") long id,
-                                 @RequestBody Transaction transaction) {
-        return converter.toDto(service.update(id, transaction));
+                                 @RequestBody TransactionDto transaction) {
+        return converter.toDto(service.update(id, converter.toEntity(transaction)));
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") long id) {
         service.delete(id);
+    }
+
+    @PostMapping("/transfer/{creditAccId}/{debitAccId}/{amount}")
+    public TransactionDto transfer(@PathVariable("creditAccId") String creditAccId,
+                                   @PathVariable("deibtAccId") String debitAccId,
+                                   @PathVariable("amount")BigDecimal amount) {
+        return converter.toDto(service.transfer(creditAccId, debitAccId, amount));
     }
 }

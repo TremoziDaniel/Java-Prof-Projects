@@ -1,19 +1,20 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Agreement;
-import com.bank.domain.exception.InvalidArgumentException;
+import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.repository.AgreementRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class AgreementServiceImpl implements AgreementService {
 
-    @Autowired
-    private AgreementRepository repository;
+    private final AgreementRepository repository;
+
+    public AgreementServiceImpl(AgreementRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Agreement> getAll() {
@@ -22,7 +23,7 @@ public class AgreementServiceImpl implements AgreementService {
 
     @Override
     public Agreement getById(long id) {
-        return repository.findById(id).orElseThrow(() -> new InvalidArgumentException("Agreement"));
+        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Agreement"));
     }
 
     @Override

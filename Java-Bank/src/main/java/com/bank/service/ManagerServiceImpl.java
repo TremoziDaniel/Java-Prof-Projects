@@ -1,20 +1,21 @@
 package com.bank.service;
 
-import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Manager;
-import com.bank.domain.exception.InvalidArgumentException;
+import com.bank.domain.entity.PersonalData;
+import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.repository.ManagerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
-    @Autowired
-    private ManagerRepository repository;
+    private final ManagerRepository repository;
+
+    public ManagerServiceImpl(ManagerRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Manager> getAll() {
@@ -23,7 +24,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Manager getById(long id) {
-        return repository.findById(id).orElseThrow(() -> new InvalidArgumentException("Manager"));
+        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Manager"));
     }
 
     @Override
@@ -48,5 +49,10 @@ public class ManagerServiceImpl implements ManagerService {
         Manager manager = getById(id);
         manager.setStatus(!manager.isStatus());
         repository.save(manager);
+    }
+
+    @Override
+    public PersonalData getPersonalData(long id) {
+        return getById(id).getPersonalData();
     }
 }

@@ -39,15 +39,15 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<AccountDto> create(@RequestBody Account account) {
+    public ResponseEntity<AccountDto> create(@RequestBody AccountDto account) {
         return ResponseEntity.ok(
-                converter.toDto(service.create(account)));
+                converter.toDto(service.create(converter.toEntity(account))));
     }
 
     @PutMapping("/{id}")
     public AccountDto update(@PathVariable("id") String id,
-                             @RequestBody Account account) {
-        return converter.toDto(service.update(id, account));
+                             @RequestBody AccountDto account) {
+        return converter.toDto(service.update(id, converter.toEntity(account)));
     }
 
     @DeleteMapping("/{id}")
@@ -55,7 +55,7 @@ public class AccountController {
         service.delete(id);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/balance")
     public BigDecimal getBalance(@PathVariable("id") String id) {
         return service.getBalance(id);
     }

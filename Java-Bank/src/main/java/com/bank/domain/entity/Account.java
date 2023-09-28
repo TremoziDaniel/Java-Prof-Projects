@@ -21,7 +21,6 @@ import java.util.UUID;
 @Table(name = "accounts")
 public class Account {
 
-    // Ask about Columns params(unique, nullable etc), enums, iban, tables(info)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
@@ -31,9 +30,6 @@ public class Account {
     private Client client;
 
     private String name;
-
-    // What does it mean?
-    //private int type;
 
     private boolean status;
 

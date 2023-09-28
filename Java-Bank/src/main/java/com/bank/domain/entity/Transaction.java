@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,12 +25,12 @@ public class Transaction {
     private long id;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id_from", referencedColumnName = "id")
-    private Account debitAccount;
+    @JoinColumn(name = "debit_account_id", referencedColumnName = "id")
+    private Account creditAccount;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id_to", referencedColumnName = "id")
-    private Account creditAccount;
+    @JoinColumn(name = "credit_account_id", referencedColumnName = "id")
+    private Account debitAccount;
 
     @Enumerated(value = EnumType.STRING)
     private TransactionType type;
@@ -38,7 +39,7 @@ public class Transaction {
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
-    private Double amount;
+    private BigDecimal amount;
 
     private String description;
 
@@ -48,10 +49,21 @@ public class Transaction {
     }
 
     public Transaction(long id, Account debitAccount, Account creditAccount, TransactionType type,
-                       Currency currency, Double amount, String description, LocalDateTime completedAt) {
+                       Currency currency, BigDecimal amount, String description, LocalDateTime completedAt) {
         this.id = id;
-        this.debitAccount = debitAccount;
         this.creditAccount = creditAccount;
+        this.debitAccount = debitAccount;
+        this.type = type;
+        this.currency = currency;
+        this.amount = amount;
+        this.description = description;
+        this.completedAt = completedAt;
+    }
+
+    public Transaction(Account debitAccount, Account creditAccount, TransactionType type,
+                       Currency currency, BigDecimal amount, String description, LocalDateTime completedAt) {
+        this.creditAccount = creditAccount;
+        this.debitAccount = debitAccount;
         this.type = type;
         this.currency = currency;
         this.amount = amount;
@@ -99,11 +111,11 @@ public class Transaction {
         this.currency = currency;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -127,8 +139,8 @@ public class Transaction {
     public String toString() {
         return "Transaction{" +
                 "id=" + id +
-                ", debitAccount=" + debitAccount +
                 ", creditAccount=" + creditAccount +
+                ", debitAccount=" + debitAccount +
                 ", type=" + type +
                 ", currency=" + currency +
                 ", amount=" + amount +

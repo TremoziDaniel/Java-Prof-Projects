@@ -9,13 +9,15 @@ public class ManagerConverter implements EntityConverter<Manager, ManagerDto>{
 
     @Override
     public ManagerDto toDto(Manager manager) {
-        return new ManagerDto(manager.getId(), manager.isStatus(),
-                manager.getCreatedAt(), manager.getUpdatedAt());
+        return new ManagerDto(manager.getId(),
+                new PersonalDataConverter().toDto(manager.getPersonalData()),
+                manager.isStatus(), manager.getCreatedAt(), manager.getUpdatedAt());
     }
 
     @Override
     public Manager toEntity(ManagerDto managerDto) {
-        return new Manager(managerDto.getId(), null, managerDto.isStatus(),
+        return new Manager(managerDto.getId(),
+                new PersonalDataConverter().toEntity(managerDto.getPersonalData()), managerDto.isStatus(),
                 managerDto.getCreatedAt(), managerDto.getUpdatedAt());
     }
 }

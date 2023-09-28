@@ -1,19 +1,20 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Product;
-import com.bank.domain.exception.InvalidArgumentException;
+import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductRepository repository;
+    private final ProductRepository repository;
+
+    public ProductServiceImpl(ProductRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Product> getAll() {
@@ -22,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getById(long id) {
-        return repository.findById(id).orElseThrow(() -> new InvalidArgumentException("Product"));
+        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Product"));
     }
 
     @Override

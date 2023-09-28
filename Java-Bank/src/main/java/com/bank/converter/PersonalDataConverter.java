@@ -12,7 +12,7 @@ public class PersonalDataConverter implements EntityConverter<PersonalData, Pers
         return new PersonalDataDto(personalData.getId(), personalData.getFirstName(),
                 personalData.getLastName(), personalData.getCountry(), personalData.getCity(),
                 personalData.getStreet(), personalData.getHouseNumber(), personalData.getApartmentNumber(),
-                personalData.getPhoneNumber(), personalData.getEmail(), personalData.getPassword());
+                null, null, null);
     }
 
     @Override
