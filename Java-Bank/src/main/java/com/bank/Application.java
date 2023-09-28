@@ -3,11 +3,11 @@ package com.bank;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/*  Java Bank Application
+/*  Java Banking Application
 *
 *   @author Danil Izmajlov
-*   @version 0.6
-*   10.08.2023
+*   @version 0.6a
+*   08.09.2023
 *       Tel-Ran
 * */
 @SpringBootApplication
