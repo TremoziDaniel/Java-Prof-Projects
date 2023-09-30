@@ -15,6 +15,8 @@ public class ProductDto {
 
     private Currency currency;
 
+    private double interestRate;
+
     private int limit;
 
     private LocalDateTime createdAt;
@@ -25,12 +27,13 @@ public class ProductDto {
     }
 
     public ProductDto(long id, ManagerDto manager, String name, boolean status, Currency currency,
-                      int limit, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                      double interestRate, int limit, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.manager = manager;
         this.name = name;
         this.status = status;
         this.currency = currency;
+        this.interestRate = interestRate;
         this.limit = limit;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -76,6 +79,14 @@ public class ProductDto {
         this.currency = currency;
     }
 
+    public double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(double interestRate) {
+        this.interestRate = interestRate;
+    }
+
     public int getLimit() {
         return limit;
     }
@@ -108,6 +119,7 @@ public class ProductDto {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", currency=" + currency +
+                ", interestRate=" + interestRate +
                 ", limit=" + limit +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

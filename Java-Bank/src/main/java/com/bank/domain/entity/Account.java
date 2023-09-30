@@ -21,6 +21,9 @@ import java.util.UUID;
 @Table(name = "accounts")
 public class Account {
 
+    // transactions, relation doesn't exit, dependency(fetch cascade), fk_keys, h2 and postgres diff, column(unique)
+    // mappedBy fields on other side of joining, constructors, @Basic, datetime @Temporal(timestamp, date, time)
+    // UUID postgres error
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;

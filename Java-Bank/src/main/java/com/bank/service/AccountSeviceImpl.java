@@ -15,7 +15,7 @@ import java.util.UUID;
 @Service
 public class AccountSeviceImpl implements AccountService {
 
-    // Ask about required services, their validity(update, remove etc), return type, Bad requests instead exceptions
+    // Ask about Bad requests instead exceptions, dates, transfer method(save), @Transactional?, update?, setters~saves
     private final AccountRepository repository;
 
     @Autowired

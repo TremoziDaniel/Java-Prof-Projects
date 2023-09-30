@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountConverter implements EntityConverter<Account, AccountDto> {
 
+    // Accounts converter problem, converting from dto to entity with null?, mapstruct?, make all converters in one?
     @Autowired
     private AccountService service;
 

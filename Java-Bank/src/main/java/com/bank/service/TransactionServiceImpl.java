@@ -74,12 +74,12 @@ public class TransactionServiceImpl implements TransactionService {
             throw new NotEnoughFundsException(String.format(
                     "Account %s have less than %.2f %s", creditAccId, amount, currency.getCurrencyAbb()));
         }
-
+        // Does this save changes(account update)?
         creditAcc.setBalance(creditAcc.getBalance().subtract(amount));
         debitAcc.setBalance(debitAcc.getBalance().add(currencyService.convertCurrency(
                 creditAcc.getCurrency().getId(), debitAcc.getCurrency().getId(), debitAcc.getBalance()))
                 .setScale(2, RoundingMode.HALF_EVEN));
-
+        // Why do I need transaction field?
         return create(new Transaction(creditAcc, debitAcc, TransactionType.PERSONAL, currency,
                 amount, "successful", LocalDateTime.now()));
     }

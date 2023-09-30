@@ -1,14 +1,6 @@
 package com.bank.domain.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,7 +23,9 @@ public class Product {
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
-    // Questionable type
+    private Double interestRate;
+
+    @Column(name="product_limit")
     private int limit;
 
     private LocalDateTime createdAt;
@@ -41,13 +35,14 @@ public class Product {
     public Product() {
     }
 
-    public Product(long id, Manager manager, String name, boolean status, Currency currency, int limit,
-                   LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Product(long id, Manager manager, String name, boolean status, Currency currency,
+                   Double interestRate, int limit, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.manager = manager;
         this.name = name;
         this.status = status;
         this.currency = currency;
+        this.interestRate = interestRate;
         this.limit = limit;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -93,6 +88,14 @@ public class Product {
         this.currency = currency;
     }
 
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
     public int getLimit() {
         return limit;
     }
@@ -125,6 +128,7 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", currency=" + currency +
+                ", interestRate=" + interestRate +
                 ", limit=" + limit +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

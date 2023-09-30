@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class AccountDto {
 
-    // Ask about needed fields, security
+    // ask about logic in dto(passwords, null fields...), @JsonProperty
     private UUID id;
 
     private ClientDto client;

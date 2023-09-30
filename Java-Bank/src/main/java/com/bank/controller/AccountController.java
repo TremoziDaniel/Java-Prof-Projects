@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequestMapping("accounts")
 public class AccountController {
 
-    // Ask about rest http requests, response entities
+    // Ask about response entities, methods for setting other entities just by id?, managing accounts on client side?
     private final AccountService service;
 
     private final EntityConverter<Account, AccountDto> converter;
