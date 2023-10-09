@@ -16,19 +16,20 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "accounts")
 public class Account {
 
-    // transactions, relation doesn't exit, dependency(fetch cascade), fk_keys, h2 and postgres diff, column(unique)
+    // transactions, relation doesn't exit, dependency(fetch cascade), fk_keys, h2 and postgres diff
     // mappedBy fields on other side of joining, constructors, @Basic, datetime @Temporal(timestamp, date, time)
     // UUID postgres error
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
@@ -36,7 +37,7 @@ public class Account {
 
     private boolean status;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
@@ -53,15 +54,14 @@ public class Account {
     public Account() {
     }
 
-    public Account(UUID id, Client client, String name, boolean status, Currency currency, BigDecimal balance,
-                   List<Transaction> transactions, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Account(UUID id, Client client, String name, boolean status, Currency currency,
+                   BigDecimal balance, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.client = client;
         this.name = name;
         this.status = status;
         this.currency = currency;
         this.balance = balance;
-        this.transactions = transactions;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -142,12 +142,12 @@ public class Account {
     public String toString() {
         return "Account{" +
                 "id=" + id +
-                ", client=" + client +
-                ", name=" + name +
+                ", client=" + client.getId() +
+                ", name='" + name + '\'' +
                 ", status=" + status +
                 ", currency=" + currency +
                 ", balance=" + balance +
-                ", transactions=" + transactions +
+                ", transactions=" + transactions.stream().map(Transaction::getId).collect(Collectors.toList()) +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

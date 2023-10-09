@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AgreementConverter implements EntityConverter<Agreement, AgreementDto>{
+
     @Override
     public AgreementDto toDto(Agreement agreement) {
         return new AgreementDto(agreement.getId(), new AccountConverter().toDto(agreement.getAccount()),

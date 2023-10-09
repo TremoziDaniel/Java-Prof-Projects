@@ -19,8 +19,7 @@ public class ClientConverter implements EntityConverter<Client, ClientDto>{
     @Override
     public ClientDto toDto(Client client) {
         return new ClientDto(client.getId(), new ManagerConverter().toDto(client.getManager()),
-                client.isStatus(), client.getTaxCode(), null/*client.getAccounts().stream().map(o ->
-                        new AccountConverter().toDto(o)).collect(Collectors.toList())*/,
+                client.isStatus(), client.getTaxCode(),
                 client.getCreatedAt(), client.getUpdatedAt());
     }
 
@@ -29,9 +28,6 @@ public class ClientConverter implements EntityConverter<Client, ClientDto>{
         return new Client(clientDto.getId(), new ManagerConverter().toEntity(clientDto.getManager()),
                 clientDto.isStatus(), clientDto.getTaxCode(),
                 service.getById(clientDto.getId().toString()).getPersonalData(),
-                service.getAccounts(clientDto.getId().toString())
-                /*clientDto.getAccounts().stream().map(o ->
-                        new AccountConverter().toEntity(o)).collect(Collectors.toList())*/,
                 clientDto.getCreatedAt(), clientDto.getUpdatedAt());
     }
 }

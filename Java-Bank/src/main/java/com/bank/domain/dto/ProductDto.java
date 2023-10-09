@@ -115,7 +115,7 @@ public class ProductDto {
     public String toString() {
         return "ProductDto{" +
                 "id=" + id +
-                ", manager=" + manager +
+                ", manager=" + manager.getId() +
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", currency=" + currency +

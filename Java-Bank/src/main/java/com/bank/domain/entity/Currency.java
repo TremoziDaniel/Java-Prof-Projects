@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class Currency {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
     private String currencyName;

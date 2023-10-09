@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     // Ask about response entities, methods for setting other entities just by id?, managing accounts on client side?
+    // @ComponentScan(@Import), @Configuration
     private final AccountService service;
 
     private final EntityConverter<Account, AccountDto> converter;

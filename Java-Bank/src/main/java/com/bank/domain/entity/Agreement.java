@@ -20,7 +20,7 @@ public class Agreement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
 
@@ -32,7 +32,7 @@ public class Agreement {
 
     private boolean status;
 
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
@@ -134,8 +134,8 @@ public class Agreement {
     public String toString() {
         return "Agreement{" +
                 "id=" + id +
-                ", account=" + account +
-                ", product=" + product +
+                ", account=" + account.getId() +
+                ", product=" + product.getId() +
                 ", interestRate=" + interestRate +
                 ", status=" + status +
                 ", currency=" + currency +

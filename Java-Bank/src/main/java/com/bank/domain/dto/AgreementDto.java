@@ -117,8 +117,8 @@ public class AgreementDto {
     public String toString() {
         return "AgreementDto{" +
                 "id=" + id +
-                ", account=" + account +
-                ", product=" + product +
+                ", account=" + account.getId() +
+                ", product=" + product.getId() +
                 ", interestRate=" + interestRate +
                 ", status=" + status +
                 ", currency=" + currency +

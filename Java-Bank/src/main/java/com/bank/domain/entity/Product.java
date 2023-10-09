@@ -19,7 +19,7 @@ public class Product {
 
     private boolean status;
 
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
@@ -124,7 +124,7 @@ public class Product {
     public String toString() {
         return "Product{" +
                 "id=" + id +
-                ", manager=" + manager +
+                ", manager=" + manager.getId() +
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", currency=" + currency +

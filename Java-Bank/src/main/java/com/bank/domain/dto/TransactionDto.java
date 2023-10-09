@@ -108,8 +108,8 @@ public class TransactionDto {
     public String toString() {
         return "TransactionDto{" +
                 "id=" + id +
-                ", creditAccount=" + creditAccount +
-                ", debitAccount=" + debitAccount +
+                ", creditAccount=" + creditAccount.getId() +
+                ", debitAccount=" + debitAccount.getId() +
                 ", type=" + type +
                 ", currency=" + currency +
                 ", amount=" + amount +

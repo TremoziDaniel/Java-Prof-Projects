@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "clients")
@@ -37,14 +38,13 @@ public class Client {
     public Client() {
     }
 
-    public Client(UUID id, Manager manager, boolean status, String taxCode, PersonalData personalData,
-                  List<Account> accounts, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Client(UUID id, Manager manager, boolean status, String taxCode,
+                  PersonalData personalData, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.manager = manager;
         this.status = status;
         this.taxCode = taxCode;
         this.personalData = personalData;
-        this.accounts = accounts;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -121,7 +121,7 @@ public class Client {
                 ", status=" + status +
                 ", taxCode='" + taxCode + '\'' +
                 ", personalData=" + personalData +
-                ", accounts=" + accounts +
+                ", accounts=" + accounts.stream().map(Account::getId).collect(Collectors.toList()) +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

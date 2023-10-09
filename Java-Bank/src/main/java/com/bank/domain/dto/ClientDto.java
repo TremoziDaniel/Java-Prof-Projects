@@ -16,8 +16,6 @@ public class ClientDto {
 
     private String taxCode;
 
-    private List<AccountDto> accounts = new ArrayList<>();
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -26,12 +24,11 @@ public class ClientDto {
     }
 
     public ClientDto(UUID id, ManagerDto manager, boolean status, String taxCode,
-                     List<AccountDto> accounts, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                     LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.manager = manager;
         this.status = status;
         this.taxCode = taxCode;
-        this.accounts = accounts;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -68,14 +65,6 @@ public class ClientDto {
         this.taxCode = taxCode;
     }
 
-    public List<AccountDto> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(List<AccountDto> accounts) {
-        this.accounts = accounts;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -96,10 +85,9 @@ public class ClientDto {
     public String toString() {
         return "ClientDto{" +
                 "id=" + id +
-                ", manager=" + manager +
+                ", manager=" + manager.getId() +
                 ", status=" + status +
                 ", taxCode='" + taxCode + '\'' +
-                ", accounts=" + accounts +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

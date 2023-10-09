@@ -3,6 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <groupId>com.bank</groupId>
+    <artifactId>java-Bank</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <!--packaging>jar</packaging-->
+    <name>Java-Bank Application</name>
+    <description>Java-Bank Spring Project</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -11,11 +17,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.java-bank</groupId>
-    <artifactId>java-Bank</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <name>Java Bank Application</name>
-    <description>Java-Bank Spring Project</description>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -88,16 +94,14 @@
             <artifactId>tomcat-embed-core</artifactId>
             <version>10.1.8</version>
         </dependency>-->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>5.6.15.Final</version>
-        </dependency>
     </dependencies>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

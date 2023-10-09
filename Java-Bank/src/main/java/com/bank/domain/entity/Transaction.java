@@ -24,18 +24,18 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "debit_account_id", referencedColumnName = "id")
     private Account creditAccount;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "credit_account_id", referencedColumnName = "id")
     private Account debitAccount;
 
     @Enumerated(value = EnumType.STRING)
     private TransactionType type;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", referencedColumnName = "id")
     private Currency currency;
 
@@ -139,8 +139,8 @@ public class Transaction {
     public String toString() {
         return "Transaction{" +
                 "id=" + id +
-                ", creditAccount=" + creditAccount +
-                ", debitAccount=" + debitAccount +
+                ", creditAccount=" + creditAccount.getId() +
+                ", debitAccount=" + debitAccount.getId() +
                 ", type=" + type +
                 ", currency=" + currency +
                 ", amount=" + amount +

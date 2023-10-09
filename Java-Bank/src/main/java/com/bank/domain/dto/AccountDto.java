@@ -9,7 +9,8 @@ import java.util.UUID;
 
 public class AccountDto {
 
-    // ask about logic in dto(passwords, null fields...), @JsonProperty
+    // ask about logic in dto(passwords, null fields...)
+    // @JsonProperty
     private UUID id;
 
     private ClientDto client;
@@ -109,7 +110,7 @@ public class AccountDto {
     public String toString() {
         return "AccountDto{" +
                 "id=" + id +
-                ", client=" + client +
+                ", client=" + client.getId() +
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", currency=" + currency +
