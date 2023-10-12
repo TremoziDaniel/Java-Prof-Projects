@@ -17,7 +17,7 @@ public class ManagerConverter implements EntityConverter<Manager, ManagerDto>{
     @Override
     public Manager toEntity(ManagerDto managerDto) {
         return new Manager(managerDto.getId(),
-                new PersonalDataConverter().toEntity(managerDto.getPersonalData()), managerDto.isStatus(),
+                null, managerDto.isStatus(),
                 managerDto.getCreatedAt(), managerDto.getUpdatedAt());
     }
 }

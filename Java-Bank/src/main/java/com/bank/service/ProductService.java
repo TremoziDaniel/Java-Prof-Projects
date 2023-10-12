@@ -10,7 +10,7 @@ public interface ProductService {
 
     public Product getById(long id);
 
-    public Product create(Product product);
+    public Product create(long managerId, Product product);
 
     public Product update(long id, Product product);
 

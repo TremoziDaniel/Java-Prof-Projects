@@ -41,17 +41,17 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Transaction"));
     }
 
-    @Override
-    public Transaction create(Transaction transaction) {
-        return repository.save(transaction);
-    }
-
-    @Override
-    public Transaction update(long id, Transaction transaction) {
-        transaction.setId(id);
-
-        return repository.save(transaction);
-    }
+//    @Override
+//    public Transaction create(Transaction transaction) {
+//        return repository.save(transaction);
+//    }
+//
+//    @Override
+//    public Transaction update(long id, Transaction transaction) {
+//        transaction.setId(id);
+//
+//        return repository.save(transaction);
+//    }
 
     @Override
     public void delete(long id) {
@@ -80,7 +80,7 @@ public class TransactionServiceImpl implements TransactionService {
                 creditAcc.getCurrency().getId(), debitAcc.getCurrency().getId(), debitAcc.getBalance()))
                 .setScale(2, RoundingMode.HALF_EVEN));
         // Why do I need transaction field?
-        return create(new Transaction(creditAcc, debitAcc, TransactionType.PERSONAL, currency,
+        return repository.save(new Transaction(creditAcc, debitAcc, TransactionType.PERSONAL, currency,
                 amount, "successful", LocalDateTime.now()));
     }
 }

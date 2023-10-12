@@ -13,7 +13,7 @@ public interface ClientService {
 
     public Client getById(String id);
 
-    public Client create(Client client);
+    public Client create(long managerId, long personalDataId, Client client);
 
     public Client update(String id, Client client);
 

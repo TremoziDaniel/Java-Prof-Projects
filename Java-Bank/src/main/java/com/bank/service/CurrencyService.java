@@ -20,4 +20,6 @@ public interface CurrencyService {
     public Currency changeRate(long id, BigDecimal rate);
 
     public BigDecimal convertCurrency(long currencyOriginal, long currencyConverter, BigDecimal amount);
+
+    public Currency getCurrencyByAbb(String abb);
 }

@@ -12,7 +12,7 @@ public interface ManagerService {
 
     public Manager getById(long id);
 
-    public Manager create(Manager manager);
+    public Manager create(long personalDataId, Manager manager);
 
     public Manager update(long id, Manager manager);
 

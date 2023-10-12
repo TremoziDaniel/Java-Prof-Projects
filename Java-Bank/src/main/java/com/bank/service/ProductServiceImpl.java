@@ -1,8 +1,10 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Product;
+import com.bank.domain.exception.CannotBeCreatedException;
 import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
+
+    @Autowired
+    private ManagerService managerService;
 
     public ProductServiceImpl(ProductRepository repository) {
         this.repository = repository;
@@ -27,13 +32,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product create(Product product) {
+    public Product create(long managerId, Product product) {
+        try {
+            product.setManager(managerService.getById(managerId));
+        } catch (ItemNotFoundException e) {
+            throw new CannotBeCreatedException(String.format("Product %s", product.getId()), e);
+        }
+
         return repository.save(product);
     }
 
     @Override
     public Product update(long id, Product product) {
+        Product oldProduct = getById(id);
         product.setId(id);
+        product.setManager(oldProduct.getManager());
 
         return repository.save(product);
     }

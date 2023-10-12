@@ -1,17 +1,19 @@
 package com.bank.domain.dto;
 
 import com.bank.domain.entity.Currency;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AgreementDto {
 
     private long id;
 
-    private AccountDto account;
+    private String accountName;
 
-    private ProductDto product;
+    private String productName;
 
     private Double interestRate;
 
@@ -28,11 +30,11 @@ public class AgreementDto {
     public AgreementDto() {
     }
 
-    public AgreementDto(long id, AccountDto account, ProductDto product, Double interestRate, boolean status,
+    public AgreementDto(long id, String accountName, String productName, Double interestRate,boolean status,
                         Currency currency, BigDecimal sum, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.account = account;
-        this.product = product;
+        this.accountName = accountName;
+        this.productName = productName;
         this.interestRate = interestRate;
         this.status = status;
         this.currency = currency;
@@ -49,20 +51,20 @@ public class AgreementDto {
         this.id = id;
     }
 
-    public AccountDto getAccount() {
-        return account;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public void setAccount(AccountDto account) {
-        this.account = account;
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
-    public ProductDto getProduct() {
-        return product;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProduct(ProductDto product) {
-        this.product = product;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public Double getInterestRate() {
@@ -117,8 +119,8 @@ public class AgreementDto {
     public String toString() {
         return "AgreementDto{" +
                 "id=" + id +
-                ", account=" + account.getId() +
-                ", product=" + product.getId() +
+                ", accountName='" + accountName + '\'' +
+                ", productName='" + productName + '\'' +
                 ", interestRate=" + interestRate +
                 ", status=" + status +
                 ", currency=" + currency +

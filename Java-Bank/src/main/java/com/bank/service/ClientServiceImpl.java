@@ -4,8 +4,11 @@ import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Manager;
 import com.bank.domain.entity.PersonalData;
+import com.bank.domain.exception.CannotBeCreatedException;
 import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.repository.ClientRepository;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +19,12 @@ import java.util.stream.Collectors;
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository repository;
+
+    @Autowired
+    private ManagerService managerService;
+
+    @Autowired
+    private PersonalDataService personalDataService;
 
     public ClientServiceImpl(ClientRepository repository) {
         this.repository = repository;
@@ -28,17 +37,28 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client getById(String id) {
-        return repository.findById(UUID.fromString(id)).orElseThrow(() -> new ItemNotFoundException("Client"));
+        return repository.findById(UUID.fromString(id)).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Client %s", id)));
     }
 
     @Override
-    public Client create(Client client) {
+    public Client create(long managerId, long personalDataId, Client client) {
+        try {
+            client.setManager(managerService.getById(managerId));
+            client.setPersonalData(personalDataService.getById(personalDataId));
+        } catch (ItemNotFoundException e) {
+            throw new CannotBeCreatedException(String.format("Client %s", client.getId()), e);
+        }
+
         return repository.save(client);
     }
 
     @Override
     public Client update(String id, Client client) {
+        Client oldClient = getById(id);
         client.setId(UUID.fromString(id));
+        client.setManager(oldClient.getManager());
+        client.setPersonalData(oldClient.getPersonalData());
 
         return repository.save(client);
     }

@@ -1,16 +1,16 @@
 package com.bank.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
 import java.util.UUID;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClientDto {
 
     private UUID id;
 
-    private ManagerDto manager;
+    private String managerName;
 
     private boolean status;
 
@@ -23,10 +23,9 @@ public class ClientDto {
     public ClientDto() {
     }
 
-    public ClientDto(UUID id, ManagerDto manager, boolean status, String taxCode,
-                     LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ClientDto(UUID id, String managerName, boolean status, String taxCode, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.manager = manager;
+        this.managerName = managerName;
         this.status = status;
         this.taxCode = taxCode;
         this.createdAt = createdAt;
@@ -41,12 +40,12 @@ public class ClientDto {
         this.id = id;
     }
 
-    public ManagerDto getManager() {
-        return manager;
+    public String getManagerName() {
+        return managerName;
     }
 
-    public void setManager(ManagerDto manager) {
-        this.manager = manager;
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
     }
 
     public boolean isStatus() {
@@ -85,7 +84,7 @@ public class ClientDto {
     public String toString() {
         return "ClientDto{" +
                 "id=" + id +
-                ", manager=" + manager.getId() +
+                ", managerName='" + managerName + '\'' +
                 ", status=" + status +
                 ", taxCode='" + taxCode + '\'' +
                 ", createdAt=" + createdAt +

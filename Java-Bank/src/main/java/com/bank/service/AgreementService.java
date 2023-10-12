@@ -10,7 +10,7 @@ public interface AgreementService {
 
     public Agreement getById(long id);
 
-    public Agreement create(Agreement agreement);
+    public Agreement create(String accountId, long productId, Agreement agreement);
 
     public Agreement update(long id, Agreement agreement);
 

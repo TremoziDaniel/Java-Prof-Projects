@@ -2,6 +2,7 @@ package com.bank.service;
 
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Currency;
+import com.bank.domain.exception.CannotBeCreatedException;
 import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.repository.AccountRepository;
@@ -19,6 +20,9 @@ public class AccountSeviceImpl implements AccountService {
     private final AccountRepository repository;
 
     @Autowired
+    private ClientService clientService;
+
+    @Autowired
     private CurrencyService currencyService;
 
     public AccountSeviceImpl(AccountRepository repository) {
@@ -32,17 +36,27 @@ public class AccountSeviceImpl implements AccountService {
 
     @Override
     public Account getById(String id) {
-        return repository.findById(UUID.fromString(id)).orElseThrow(() -> new ItemNotFoundException("Account"));
+        return repository.findById(UUID.fromString(id)).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Account %s", id)));
     }
 
     @Override
-    public Account create(Account account) {
+    public Account create(String clientId, Account account) {
+        try {
+            account.setClient(clientService.getById(clientId));
+        } catch (ItemNotFoundException e)
+        {
+            throw new CannotBeCreatedException(String.format("Account %s ", account.getId()), e);
+        }
+
         return repository.save(account);
     }
 
     @Override
     public Account update(String id, Account account) {
+        Account oldAccount = getById(id);
         account.setId(UUID.fromString(id));
+        account.setClient(oldAccount.getClient());
 
         return repository.save(account);
     }
@@ -50,6 +64,7 @@ public class AccountSeviceImpl implements AccountService {
     @Override
     public void delete(String id) {
         repository.deleteById(UUID.fromString(id));
+
     }
 
     @Override

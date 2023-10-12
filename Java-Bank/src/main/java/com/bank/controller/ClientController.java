@@ -11,7 +11,7 @@ import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Manager;
 import com.bank.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,49 +40,58 @@ public class ClientController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<ClientDto> getAll() {
         return service.getAll().stream().map(
                 converter::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ClientDto getById(@PathVariable("id") String id) {
         return converter.toDto(service.getById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<ClientDto> create(@RequestBody ClientDto client) {
-        return ResponseEntity.ok(
-                converter.toDto(service.create(converter.toEntity(client))));
+    @PostMapping("/{managerId}/{personalDataId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ClientDto create(@PathVariable("managerId") long managerId,
+            @PathVariable("personalDataId") long personalDataId, @RequestBody ClientDto client) {
+        return converter.toDto(service.create(managerId, personalDataId, converter.toEntity(client)));
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ClientDto update(@PathVariable("id") String id, @RequestBody ClientDto client) {
         return converter.toDto(service.update(id, converter.toEntity(client)));
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") String id) {
         service.delete(id);
     }
 
     @GetMapping("/{id}/manager")
+    @ResponseStatus(HttpStatus.OK)
     public ManagerDto getManager(@PathVariable("id") String id) {
         return managerConverter.toDto(service.getManager(id));
     }
 
     @GetMapping("/{id}/account")
+    @ResponseStatus(HttpStatus.OK)
     public List<AccountDto> getAccounts(@PathVariable("id") String id) {
         return service.getAccounts(id).stream().map(
                 accountConverter::toDto).collect(Collectors.toList());
     }
 
     @PatchMapping("changeStatus/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeStatus(@PathVariable("id") String id) {
         service.changeStatus(id);
     }
 
     @GetMapping("{id}/personalData")
+    @ResponseStatus(HttpStatus.OK)
     public PersonalDataDto getPersonalData(@PathVariable("id") String id) {
         return personalDataConverter.toDto(service.getById(id).getPersonalData());
     }

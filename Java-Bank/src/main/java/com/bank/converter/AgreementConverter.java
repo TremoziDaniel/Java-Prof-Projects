@@ -9,17 +9,15 @@ public class AgreementConverter implements EntityConverter<Agreement, AgreementD
 
     @Override
     public AgreementDto toDto(Agreement agreement) {
-        return new AgreementDto(agreement.getId(), new AccountConverter().toDto(agreement.getAccount()),
-                new ProductConverter().toDto(agreement.getProduct()), agreement.getInterestRate(),
+        return new AgreementDto(agreement.getId(), agreement.getAccount().getName(),
+                agreement.getProduct().getName(), agreement.getInterestRate(),
                 agreement.isStatus(), agreement.getCurrency(),
                 agreement.getSum(), agreement.getCreatedAt(), agreement.getUpdatedAt());
     }
 
     @Override
     public Agreement toEntity(AgreementDto agreementDto) {
-        return new Agreement(agreementDto.getId(),
-                new AccountConverter().toEntity(agreementDto.getAccount()),
-                new ProductConverter().toEntity(agreementDto.getProduct()),
+        return new Agreement(agreementDto.getId(), null, null,
                 agreementDto.getInterestRate(), agreementDto.isStatus(), agreementDto.getCurrency(),
                 agreementDto.getSum(), agreementDto.getCreatedAt(), agreementDto.getUpdatedAt());
     }

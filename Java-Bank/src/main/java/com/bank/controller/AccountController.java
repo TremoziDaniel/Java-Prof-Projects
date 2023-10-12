@@ -4,7 +4,7 @@ import com.bank.converter.EntityConverter;
 import com.bank.domain.dto.AccountDto;
 import com.bank.domain.entity.Account;
 import com.bank.service.AccountService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -29,50 +29,58 @@ public class AccountController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<AccountDto> getAll() {
         return service.getAll().stream().map(
                 converter::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public AccountDto getById(@PathVariable("id") String id) {
         return converter.toDto(service.getById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<AccountDto> create(@RequestBody AccountDto account) {
-        return ResponseEntity.ok(
-                converter.toDto(service.create(converter.toEntity(account))));
+    @PostMapping("/{clientId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AccountDto create(@PathVariable String clientId, @RequestBody AccountDto account) {
+        return converter.toDto(service.create(clientId, converter.toEntity(account)));
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public AccountDto update(@PathVariable("id") String id,
                              @RequestBody AccountDto account) {
         return converter.toDto(service.update(id, converter.toEntity(account)));
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") String id) {
         service.delete(id);
     }
 
     @GetMapping("/{id}/balance")
+    @ResponseStatus(HttpStatus.OK)
     public BigDecimal getBalance(@PathVariable("id") String id) {
         return service.getBalance(id);
     }
 
     @PatchMapping("changeStatus/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeStatus(@PathVariable("id") String id) {
         service.changeStatus(id);
     }
 
     @PatchMapping("changeCurrency/{id}/{currencyId}")
+    @ResponseStatus(HttpStatus.OK)
     public AccountDto changeCurrency(@PathVariable("id") String id,
                                      @PathVariable("currencyId") long currencyId) {
         return converter.toDto(service.changeCurrency(id, currencyId));
     }
 
     @PatchMapping("topup/{id}/{amount}")
+    @ResponseStatus(HttpStatus.OK)
     public AccountDto topUp (@PathVariable("id") String id,
                              @PathVariable("amount") BigDecimal amount) {
         return converter.toDto(service.topUp(id, amount));

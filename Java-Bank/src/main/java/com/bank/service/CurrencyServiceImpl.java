@@ -62,4 +62,12 @@ public class CurrencyServiceImpl implements CurrencyService{
 
         return amount;
     }
+
+    @Override
+    public Currency getCurrencyByAbb(String abb) {
+        List<Currency> currencies = getAll();
+
+        return currencies.stream().filter(cur -> abb.equals(cur.getCurrencyAbb()))
+                .findAny().orElseThrow(() -> new ItemNotFoundException("Currency"));
+    }
 }

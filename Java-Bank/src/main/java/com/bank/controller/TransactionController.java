@@ -4,7 +4,7 @@ import com.bank.converter.EntityConverter;
 import com.bank.domain.dto.TransactionDto;
 import com.bank.domain.entity.Transaction;
 import com.bank.service.TransactionService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -26,36 +26,28 @@ public class TransactionController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<TransactionDto> getAll() {
         return service.getAll().stream().map(
                 converter::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public TransactionDto getById(@PathVariable("id") long id) {
         return converter.toDto(service.getById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<TransactionDto> create(@RequestBody TransactionDto transaction) {
-        return ResponseEntity.ok(
-                converter.toDto(service.create(converter.toEntity(transaction))));
-    }
-
-    @PutMapping("/{id}")
-    public TransactionDto update(@PathVariable("id") long id,
-                                 @RequestBody TransactionDto transaction) {
-        return converter.toDto(service.update(id, converter.toEntity(transaction)));
-    }
-
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") long id) {
         service.delete(id);
     }
 
     @PostMapping("/transfer/{creditAccId}/{debitAccId}/{amount}")
+    @ResponseStatus(HttpStatus.CREATED)
     public TransactionDto transfer(@PathVariable("creditAccId") String creditAccId,
-                                   @PathVariable("deibtAccId") String debitAccId,
+                                   @PathVariable("debitAccId") String debitAccId,
                                    @PathVariable("amount")BigDecimal amount) {
         return converter.toDto(service.transfer(creditAccId, debitAccId, amount));
     }

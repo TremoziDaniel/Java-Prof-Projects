@@ -12,10 +12,6 @@ public interface TransactionService {
 
     public Transaction getById(long id);
 
-    public Transaction create(Transaction transaction);
-
-    public Transaction update(long id, Transaction transaction);
-
     public void delete(long id);
 
     public Transaction transfer(String creditAccId, String debitAccId, BigDecimal amount);

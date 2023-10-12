@@ -2,18 +2,20 @@ package com.bank.domain.dto;
 
 import java.time.LocalDateTime;
 import com.bank.domain.entity.Currency;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductDto {
 
     private long id;
 
-    private ManagerDto manager;
+    private String managerName;
 
     private String name;
 
     private boolean status;
 
-    private Currency currency;
+    private String currencyAbb;
 
     private double interestRate;
 
@@ -26,13 +28,13 @@ public class ProductDto {
     public ProductDto() {
     }
 
-    public ProductDto(long id, ManagerDto manager, String name, boolean status, Currency currency,
+    public ProductDto(long id, String managerName, String name, boolean status, String currencyAbb,
                       double interestRate, int limit, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.manager = manager;
+        this.managerName = managerName;
         this.name = name;
         this.status = status;
-        this.currency = currency;
+        this.currencyAbb = currencyAbb;
         this.interestRate = interestRate;
         this.limit = limit;
         this.createdAt = createdAt;
@@ -47,12 +49,12 @@ public class ProductDto {
         this.id = id;
     }
 
-    public ManagerDto getManager() {
-        return manager;
+    public String getManagerName() {
+        return managerName;
     }
 
-    public void setManager(ManagerDto manager) {
-        this.manager = manager;
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
     }
 
     public String getName() {
@@ -71,12 +73,12 @@ public class ProductDto {
         this.status = status;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public String getCurrencyAbb() {
+        return currencyAbb;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
+    public void setCurrencyAbb(String currencyAbb) {
+        this.currencyAbb = currencyAbb;
     }
 
     public double getInterestRate() {
@@ -115,10 +117,10 @@ public class ProductDto {
     public String toString() {
         return "ProductDto{" +
                 "id=" + id +
-                ", manager=" + manager.getId() +
+                ", managerName='" + managerName + '\'' +
                 ", name='" + name + '\'' +
                 ", status=" + status +
-                ", currency=" + currency +
+                ", currencyAbb='" + currencyAbb + '\'' +
                 ", interestRate=" + interestRate +
                 ", limit=" + limit +
                 ", createdAt=" + createdAt +
