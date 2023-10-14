@@ -12,13 +12,13 @@ public class TransactionDto {
 
     private long id;
 
-    private AccountDto creditAccount;
+    private String creditAccountName;
 
-    private AccountDto debitAccount;
+    private String debitAccountName;
 
     private TransactionType type;
 
-    private Currency currency;
+    private String currencyAbb;
 
     private BigDecimal amount;
 
@@ -29,13 +29,13 @@ public class TransactionDto {
     public TransactionDto() {
     }
 
-    public TransactionDto(long id, AccountDto creditAccount, AccountDto debitAccount, TransactionType type,
-                          Currency currency, BigDecimal amount, String description, LocalDateTime completedAt) {
+    public TransactionDto(long id, String creditAccountName, String debitAccountName, TransactionType type,
+                          String currencyAbb, BigDecimal amount, String description, LocalDateTime completedAt) {
         this.id = id;
-        this.creditAccount = creditAccount;
-        this.debitAccount = debitAccount;
+        this.creditAccountName = creditAccountName;
+        this.debitAccountName = debitAccountName;
         this.type = type;
-        this.currency = currency;
+        this.currencyAbb = currencyAbb;
         this.amount = amount;
         this.description = description;
         this.completedAt = completedAt;
@@ -49,20 +49,20 @@ public class TransactionDto {
         this.id = id;
     }
 
-    public AccountDto getDebitAccount() {
-        return debitAccount;
+    public String getCreditAccountName() {
+        return creditAccountName;
     }
 
-    public void setDebitAccount(AccountDto debitAccount) {
-        this.debitAccount = debitAccount;
+    public void setCreditAccountName(String creditAccountName) {
+        this.creditAccountName = creditAccountName;
     }
 
-    public AccountDto getCreditAccount() {
-        return creditAccount;
+    public String getDebitAccountName() {
+        return debitAccountName;
     }
 
-    public void setCreditAccount(AccountDto creditAccount) {
-        this.creditAccount = creditAccount;
+    public void setDebitAccountName(String debitAccountName) {
+        this.debitAccountName = debitAccountName;
     }
 
     public TransactionType getType() {
@@ -73,12 +73,12 @@ public class TransactionDto {
         this.type = type;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public String getCurrencyAbb() {
+        return currencyAbb;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
+    public void setCurrencyAbb(String currencyAbb) {
+        this.currencyAbb = currencyAbb;
     }
 
     public BigDecimal getAmount() {
@@ -109,10 +109,10 @@ public class TransactionDto {
     public String toString() {
         return "TransactionDto{" +
                 "id=" + id +
-                ", creditAccount=" + creditAccount.getId() +
-                ", debitAccount=" + debitAccount.getId() +
+                ", creditAccount='" + creditAccountName + '\'' +
+                ", debitAccount='" + debitAccountName + '\'' +
                 ", type=" + type +
-                ", currency=" + currency +
+                ", currency='" + currencyAbb + '\'' +
                 ", amount=" + amount +
                 ", description='" + description + '\'' +
                 ", completedAt=" + completedAt +

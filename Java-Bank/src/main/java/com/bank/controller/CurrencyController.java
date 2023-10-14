@@ -27,7 +27,7 @@ public class CurrencyController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Currency getById(@PathVariable("id") long id) {
+    public Currency getById(@PathVariable("id") int id) {
         return service.getById(id);
     }
 
@@ -39,20 +39,26 @@ public class CurrencyController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Currency update(@PathVariable("id") long id,
+    public Currency update(@PathVariable("id") int id,
                               @RequestBody Currency currency) {
         return service.update(id, currency);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") long id) {
+    public void delete(@PathVariable("id") int id) {
         service.delete(id);
     }
 
     @PatchMapping("/changeCurrency/{id}/{rate}")
     @ResponseStatus(HttpStatus.OK)
-    public Currency changeRate(@PathVariable("id") long id, @PathVariable("rate") BigDecimal rate) {
+    public Currency changeRate(@PathVariable("id") int id, @PathVariable("rate") BigDecimal rate) {
         return service.changeRate(id, rate);
+    }
+
+    @GetMapping("/{abb}")
+    @ResponseStatus(HttpStatus.OK)
+    public Currency getCurrencyByAbb(@PathVariable("abb") String abb) {
+        return service.getCurrencyByAbb(abb);
     }
 }

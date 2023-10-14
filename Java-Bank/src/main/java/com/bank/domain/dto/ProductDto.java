@@ -120,7 +120,7 @@ public class ProductDto {
                 ", managerName='" + managerName + '\'' +
                 ", name='" + name + '\'' +
                 ", status=" + status +
-                ", currencyAbb='" + currencyAbb + '\'' +
+                ", currency='" + currencyAbb + '\'' +
                 ", interestRate=" + interestRate +
                 ", limit=" + limit +
                 ", createdAt=" + createdAt +

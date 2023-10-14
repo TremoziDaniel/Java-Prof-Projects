@@ -2,6 +2,7 @@ package com.bank.service;
 
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Currency;
+import com.bank.domain.entity.Transaction;
 import com.bank.domain.exception.CannotBeCreatedException;
 import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.ItemNotFoundException;
@@ -41,6 +42,13 @@ public class AccountSeviceImpl implements AccountService {
     }
 
     @Override
+    public List<Transaction> getTransactions(String id) {
+        Account account = getById(id);
+
+        return account.getTransactions();
+    }
+
+    @Override
     public Account create(String clientId, Account account) {
         try {
             account.setClient(clientService.getById(clientId));
@@ -72,6 +80,8 @@ public class AccountSeviceImpl implements AccountService {
         return getById(id).getBalance();
     }
 
+
+
     @Override
     public void changeStatus(String id) {
         Account account = getById(id);
@@ -80,7 +90,7 @@ public class AccountSeviceImpl implements AccountService {
     }
 
     @Override
-    public Account changeCurrency(String id, long currencyID) {
+    public Account changeCurrency(String id, int currencyID) {
         Account account = getById(id);
 
         if (account.isStatus()) {

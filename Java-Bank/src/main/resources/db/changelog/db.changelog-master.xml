@@ -62,7 +62,7 @@
         </createTable>
 
         <createTable tableName="currencies">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="currency_pk"/>
             </column>
             <column name="currency_name" type="varchar(255)">

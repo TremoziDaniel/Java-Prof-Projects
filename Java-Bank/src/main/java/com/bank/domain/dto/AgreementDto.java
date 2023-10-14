@@ -1,6 +1,5 @@
 package com.bank.domain.dto;
 
-import com.bank.domain.entity.Currency;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
@@ -19,7 +18,7 @@ public class AgreementDto {
 
     private boolean status;
 
-    private Currency currency;
+    private String currencyAbb;
 
     private BigDecimal sum;
 
@@ -30,14 +29,14 @@ public class AgreementDto {
     public AgreementDto() {
     }
 
-    public AgreementDto(long id, String accountName, String productName, Double interestRate,boolean status,
-                        Currency currency, BigDecimal sum, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public AgreementDto(long id, String accountName, String productName, Double interestRate, boolean status,
+                        String currencyAbb, BigDecimal sum, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.accountName = accountName;
         this.productName = productName;
         this.interestRate = interestRate;
         this.status = status;
-        this.currency = currency;
+        this.currencyAbb = currencyAbb;
         this.sum = sum;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -83,12 +82,12 @@ public class AgreementDto {
         this.status = status;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public String getCurrencyAbb() {
+        return currencyAbb;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
+    public void setCurrencyAbb(String currencyAbb) {
+        this.currencyAbb = currencyAbb;
     }
 
     public BigDecimal getSum() {
@@ -123,7 +122,7 @@ public class AgreementDto {
                 ", productName='" + productName + '\'' +
                 ", interestRate=" + interestRate +
                 ", status=" + status +
-                ", currency=" + currency +
+                ", currency='" + currencyAbb + '\'' +
                 ", sum=" + sum +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

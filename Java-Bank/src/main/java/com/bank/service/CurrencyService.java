@@ -9,17 +9,17 @@ public interface CurrencyService {
 
     public List<Currency> getAll();
 
-    public Currency getById(long id);
+    public Currency getById(int id);
 
     public Currency create(Currency currency);
 
-    public Currency update(long id, Currency currency);
+    public Currency update(int id, Currency currency);
 
-    public void delete(long id);
+    public void delete(int id);
 
-    public Currency changeRate(long id, BigDecimal rate);
+    public Currency changeRate(int id, BigDecimal rate);
 
-    public BigDecimal convertCurrency(long currencyOriginal, long currencyConverter, BigDecimal amount);
+    public BigDecimal convertCurrency(int currencyOriginal, int currencyConverter, BigDecimal amount);
 
     public Currency getCurrencyByAbb(String abb);
 }

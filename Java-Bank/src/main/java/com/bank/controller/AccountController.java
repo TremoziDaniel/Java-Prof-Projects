@@ -2,8 +2,11 @@ package com.bank.controller;
 
 import com.bank.converter.EntityConverter;
 import com.bank.domain.dto.AccountDto;
+import com.bank.domain.dto.TransactionDto;
 import com.bank.domain.entity.Account;
+import com.bank.domain.entity.Transaction;
 import com.bank.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +17,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("accounts")
 public class AccountController {
-
     // Ask about response entities, methods for setting other entities just by id?, managing accounts on client side?
-    // @ComponentScan(@Import), @Configuration
+    // @ComponentScan(@Import), @Configuration, @ModelAttribute, @Valid
     private final AccountService service;
 
     private final EntityConverter<Account, AccountDto> converter;
     //private final AccountConverter converter;
+    @Autowired
+    private EntityConverter<Transaction, TransactionDto> transactionConverter;
 
     public AccountController(AccountService service,
                              EntityConverter<Account, AccountDto> converter) {
@@ -66,6 +70,13 @@ public class AccountController {
         return service.getBalance(id);
     }
 
+    @GetMapping("/{id}/transactions")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TransactionDto> getTransactions(@PathVariable("id") String id) {
+        return service.getTransactions(id).stream().map(
+                transactionConverter::toDto).collect(Collectors.toList());
+    }
+
     @PatchMapping("changeStatus/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeStatus(@PathVariable("id") String id) {
@@ -75,7 +86,7 @@ public class AccountController {
     @PatchMapping("changeCurrency/{id}/{currencyId}")
     @ResponseStatus(HttpStatus.OK)
     public AccountDto changeCurrency(@PathVariable("id") String id,
-                                     @PathVariable("currencyId") long currencyId) {
+                                     @PathVariable("currencyId") int currencyId) {
         return converter.toDto(service.changeCurrency(id, currencyId));
     }
 

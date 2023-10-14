@@ -24,7 +24,7 @@ public class CurrencyServiceImpl implements CurrencyService{
     }
 
     @Override
-    public Currency getById(long id) {
+    public Currency getById(int id) {
         return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Currency"));
     }
 
@@ -34,19 +34,19 @@ public class CurrencyServiceImpl implements CurrencyService{
     }
 
     @Override
-    public Currency update(long id, Currency currency) {
+    public Currency update(int id, Currency currency) {
         currency.setId(id);
 
         return repository.save(currency);
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(int id) {
         repository.deleteById(id);
     }
 
     @Override
-    public Currency changeRate(long id, BigDecimal rate) {
+    public Currency changeRate(int id, BigDecimal rate) {
         Currency currency = getById(id);
         currency.setRate(rate);
 
@@ -54,7 +54,7 @@ public class CurrencyServiceImpl implements CurrencyService{
     }
 
     @Override
-    public BigDecimal convertCurrency(long currencyOriginalId, long currencyConverterId, BigDecimal amount) {
+    public BigDecimal convertCurrency(int currencyOriginalId, int currencyConverterId, BigDecimal amount) {
         Currency currencyOriginal = getById(currencyConverterId);
         Currency currencyConverter = getById(currencyConverterId);
         amount = amount.divide(currencyOriginal.getRate()).multiply(currencyConverter.getRate())

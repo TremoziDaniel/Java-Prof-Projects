@@ -13,7 +13,7 @@ public class Currency {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private long id;
+    private int id;
 
     private String currencyName;
 
@@ -24,18 +24,18 @@ public class Currency {
     public Currency() {
     }
 
-    public Currency(long id, String currencyName, String currencyAbb, BigDecimal rate) {
+    public Currency(int id, String currencyName, String currencyAbb, BigDecimal rate) {
         this.id = id;
         this.currencyName = currencyName;
         this.currencyAbb = currencyAbb;
         this.rate = rate;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

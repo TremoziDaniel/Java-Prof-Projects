@@ -1,6 +1,7 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Account;
+import com.bank.domain.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,9 +20,11 @@ public interface AccountService {
 
     public BigDecimal getBalance(String id);
 
+    public List<Transaction> getTransactions(String id);
+
     public void changeStatus(String id);
 
-    public Account changeCurrency(String id, long currencyID);
+    public Account changeCurrency(String id, int currencyID);
 
     public Account topUp(String id, BigDecimal amount);
 }
