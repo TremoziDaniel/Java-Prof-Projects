@@ -84,13 +84,13 @@ public class ClientController {
                 accountConverter::toDto).collect(Collectors.toList());
     }
 
-    @PatchMapping("changeStatus/{id}")
+    @PatchMapping("/changeStatus/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeStatus(@PathVariable("id") String id) {
         service.changeStatus(id);
     }
 
-    @GetMapping("{id}/personalData")
+    @GetMapping("/{id}/personalData")
     @ResponseStatus(HttpStatus.OK)
     public PersonalDataDto getPersonalData(@PathVariable("id") String id) {
         return personalDataConverter.toDto(service.getById(id).getPersonalData());

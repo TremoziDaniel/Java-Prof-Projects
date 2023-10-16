@@ -63,13 +63,13 @@ public class ManagerController {
         service.delete(id);
     }
 
-    @PatchMapping("changeStatus/{id}")
+    @PatchMapping("/changeStatus/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeStatus(@PathVariable("id") long id) {
         service.changeStatus(id);
     }
 
-    @GetMapping("{id}/personalData")
+    @GetMapping("/{id}/personalData")
     @ResponseStatus(HttpStatus.OK)
     public PersonalDataDto getPersonalData(@PathVariable("id") long id) {
         return personalDataConverter.toDto(service.getById(id).getPersonalData());

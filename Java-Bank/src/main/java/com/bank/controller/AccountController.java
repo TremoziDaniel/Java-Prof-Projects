@@ -77,20 +77,20 @@ public class AccountController {
                 transactionConverter::toDto).collect(Collectors.toList());
     }
 
-    @PatchMapping("changeStatus/{id}")
+    @PatchMapping("/changeStatus/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeStatus(@PathVariable("id") String id) {
         service.changeStatus(id);
     }
 
-    @PatchMapping("changeCurrency/{id}/{currencyId}")
+    @PatchMapping("/changeCurrency/{id}/{currencyId}")
     @ResponseStatus(HttpStatus.OK)
     public AccountDto changeCurrency(@PathVariable("id") String id,
                                      @PathVariable("currencyId") int currencyId) {
         return converter.toDto(service.changeCurrency(id, currencyId));
     }
 
-    @PatchMapping("topup/{id}/{amount}")
+    @PatchMapping("/topup/{id}/{amount}")
     @ResponseStatus(HttpStatus.OK)
     public AccountDto topUp (@PathVariable("id") String id,
                              @PathVariable("amount") BigDecimal amount) {
