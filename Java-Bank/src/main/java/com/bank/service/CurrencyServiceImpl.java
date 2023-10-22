@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CurrencyServiceImpl implements CurrencyService{
@@ -20,12 +22,18 @@ public class CurrencyServiceImpl implements CurrencyService{
 
     @Override
     public List<Currency> getAll() {
-        return repository.findAll();
+        List<Currency> currencies = repository.findAll();
+        if (currencies.isEmpty()) {
+            throw new ItemNotFoundException("Currencies");
+        }
+
+        return currencies;
     }
 
     @Override
     public Currency getById(int id) {
-        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Currency"));
+        return repository.findById(id).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Currency %d", id)));
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.bank.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -33,31 +34,26 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Transaction> getAll() {
-        return repository.findAll();
+        List<Transaction> transactions = repository.findAll();
+        if (transactions.isEmpty()) {
+            throw new ItemNotFoundException("Transactions");
+        }
+
+        return transactions;
     }
 
     @Override
     public Transaction getById(long id) {
-        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Transaction"));
+        return repository.findById(id).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Transaction %d", id)));
     }
-
-//    @Override
-//    public Transaction create(Transaction transaction) {
-//        return repository.save(transaction);
-//    }
-//
-//    @Override
-//    public Transaction update(long id, Transaction transaction) {
-//        transaction.setId(id);
-//
-//        return repository.save(transaction);
-//    }
 
     @Override
     public void delete(long id) {
         repository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public Transaction transfer(String creditAccId, String debitAccId, BigDecimal amount) {
         Account creditAcc = accountService.getById(creditAccId);

@@ -18,12 +18,18 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public List<PersonalData> getAll() {
-        return repository.findAll();
+        List<PersonalData> personalData =  repository.findAll();
+        if (personalData.isEmpty()) {
+            throw new ItemNotFoundException("PersonalData");
+        }
+
+        return personalData;
     }
 
     @Override
     public PersonalData getById(long id) {
-        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Info"));
+        return repository.findById(id).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Personal Data %d", id)));
     }
 
     @Override
@@ -33,6 +39,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public PersonalData update(long id, PersonalData personalData) {
+        getById(id);
         personalData.setId(id);
 
         return repository.save(personalData);

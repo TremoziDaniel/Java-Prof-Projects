@@ -23,12 +23,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getAll() {
-        return repository.findAll();
+        List<Product> products = repository.findAll();
+        if (products.isEmpty()) {
+            throw new ItemNotFoundException("Products");
+        }
+
+        return products;
     }
 
     @Override
     public Product getById(long id) {
-        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Product"));
+        return repository.findById(id).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Product %d", id)));
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.bank.domain.exception.CannotBeCreatedException;
 import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.repository.AccountRepository;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,12 @@ public class AccountSeviceImpl implements AccountService {
 
     @Override
     public List<Account> getAll() {
-        return repository.findAll();
+        List<Account> accounts = repository.findAll();
+        if (accounts.isEmpty()) {
+            throw new ItemNotFoundException("Accounts");
+        }
+
+        return accounts;
     }
 
     @Override
@@ -76,8 +82,10 @@ public class AccountSeviceImpl implements AccountService {
     }
 
     @Override
-    public BigDecimal getBalance(String id) {
-        return getById(id).getBalance();
+    public Pair<String, BigDecimal> getBalance(String id) {
+        Account account = getById(id);
+
+        return new Pair<String, BigDecimal>(account.getCurrency().getCurrencyAbb(), account.getBalance());
     }
 
 

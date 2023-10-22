@@ -24,12 +24,18 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public List<Manager> getAll() {
-        return repository.findAll();
+        List<Manager> managers = repository.findAll();
+        if (managers.isEmpty()) {
+            throw new ItemNotFoundException("Managers");
+        }
+
+        return managers;
     }
 
     @Override
     public Manager getById(long id) {
-        return repository.findById(id).orElseThrow(() -> new ItemNotFoundException("Manager"));
+        return repository.findById(id).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Manager %d", id)));
     }
 
     @Override

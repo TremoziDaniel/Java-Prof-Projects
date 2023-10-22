@@ -6,6 +6,7 @@ import com.bank.domain.dto.TransactionDto;
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Transaction;
 import com.bank.service.AccountService;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -66,7 +67,7 @@ public class AccountController {
 
     @GetMapping("/{id}/balance")
     @ResponseStatus(HttpStatus.OK)
-    public BigDecimal getBalance(@PathVariable("id") String id) {
+    public Pair<String, BigDecimal> getBalance(@PathVariable("id") String id) {
         return service.getBalance(id);
     }
 

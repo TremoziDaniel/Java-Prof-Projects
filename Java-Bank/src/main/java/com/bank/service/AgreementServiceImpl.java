@@ -26,7 +26,12 @@ public class AgreementServiceImpl implements AgreementService {
 
     @Override
     public List<Agreement> getAll() {
-        return repository.findAll();
+        List<Agreement> agreements = repository.findAll();
+        if (agreements.isEmpty()) {
+            throw new ItemNotFoundException("Agreements");
+        }
+
+        return agreements;
     }
 
     @Override

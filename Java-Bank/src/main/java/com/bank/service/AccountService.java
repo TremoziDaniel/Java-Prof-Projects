@@ -2,6 +2,7 @@ package com.bank.service;
 
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Transaction;
+import javafx.util.Pair;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,7 +19,7 @@ public interface AccountService {
 
     public void delete(String id);
 
-    public BigDecimal getBalance(String id);
+    public Pair<String, BigDecimal> getBalance(String id);
 
     public List<Transaction> getTransactions(String id);
 

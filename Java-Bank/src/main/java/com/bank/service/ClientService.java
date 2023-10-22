@@ -26,4 +26,6 @@ public interface ClientService {
     public void changeStatus(String id);
 
     public PersonalData getPersonalData(String id);
+
+    public Client getClientByTaxCode(String taxCode);
 }

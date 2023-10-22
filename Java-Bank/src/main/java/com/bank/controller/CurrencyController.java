@@ -56,7 +56,7 @@ public class CurrencyController {
         return service.changeRate(id, rate);
     }
 
-    @GetMapping("/{abb}")
+    @GetMapping("/getByAbb/{abb}")
     @ResponseStatus(HttpStatus.OK)
     public Currency getCurrencyByAbb(@PathVariable("abb") String abb) {
         return service.getCurrencyByAbb(abb);

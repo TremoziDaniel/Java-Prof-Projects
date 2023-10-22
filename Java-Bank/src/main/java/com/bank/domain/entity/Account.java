@@ -24,8 +24,8 @@ public class Account {
 
     // transactions, relation doesn't exit, dependency(fetch cascade), fk_keys, h2 and postgres diff
     // mappedBy fields on other side of joining, constructors, @Basic, datetime @Temporal(timestamp, date, time)
-    // UUID postgres error
-    // @Pattern, @NotBlank, @JsonFormat
+    // UUID postgres error, Dates creation
+    // @Pattern, @NotBlank, @JsonFormat, @JsonIgnore(@JsonBackReference, @JsonManagedReference)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;

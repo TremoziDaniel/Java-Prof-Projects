@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,7 +34,12 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<Client> getAll() {
-        return repository.findAll();
+        List<Client> clients = repository.findAll();
+        if (clients.isEmpty()) {
+            throw new ItemNotFoundException("Clients");
+        }
+
+        return clients;
     }
 
     @Override
@@ -81,7 +88,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void changeStatus(String id) {
         Client client = getById(id);
-        client.getAccounts().stream().peek(o -> o.setStatus(!client.isStatus())).collect(Collectors.toList());
+        client.getAccounts().stream().peek(acc -> acc.setStatus(!client.isStatus())).collect(Collectors.toList());
         client.setStatus(!client.isStatus());
         repository.save(client);
     }
@@ -89,5 +96,11 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public PersonalData getPersonalData(String id) {
         return getById(id).getPersonalData();
+    }
+
+    @Override
+    public Client getClientByTaxCode(String taxCode) {
+        return getAll().stream().filter(c -> c.getTaxCode().equals(taxCode)).findFirst()
+                .orElseThrow(() -> new ItemNotFoundException(String.format("Client with tax code %s", taxCode)));
     }
 }

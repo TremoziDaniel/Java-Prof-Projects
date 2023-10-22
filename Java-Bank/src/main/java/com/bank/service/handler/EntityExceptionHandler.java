@@ -6,36 +6,43 @@ import com.bank.domain.exception.ItemNotFoundException;
 import com.bank.domain.exception.NotEnoughFundsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class EntityExceptionHandler {
 
     @ExceptionHandler
-    public ResponseStatusException ItemNotFoundException(ItemNotFoundException exception,
+    public ResponseEntity ItemNotFoundException(ItemNotFoundException exception,
                                                          HttpServletRequest request) {
-        return new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage(), exception);
+        return new ResponseEntity(new StringBuilder(exception.getClass().getSimpleName()).append(" ")
+                .append(exception.getMessage()),
+                HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    public ResponseStatusException CannotBeCreatedException(CannotBeCreatedException exception,
+    public ResponseEntity CannotBeCreatedException(CannotBeCreatedException exception,
                                                             HttpServletRequest request) {
-        return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
+        return new ResponseEntity(new StringBuilder(exception.getClass().getSimpleName()).append(" ")
+                .append(exception.getMessage()),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseStatusException EntityNotAvailableException(EntityNotAvailableException exception,
+    public ResponseEntity EntityNotAvailableException(EntityNotAvailableException exception,
                                                                HttpServletRequest request) {
-        return new ResponseStatusException(HttpStatus.UNAUTHORIZED, exception.getMessage(), exception);
+        return new ResponseEntity(new StringBuilder(exception.getClass().getSimpleName()).append(" ")
+                .append(exception.getMessage()),
+                HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler
-    public ResponseStatusException NotEnoughFundsException(NotEnoughFundsException exception,
+    public ResponseEntity NotEnoughFundsException(NotEnoughFundsException exception,
                                                            HttpServletRequest request) {
-        return  new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, exception.getMessage(), exception);
+        return  new ResponseEntity(new StringBuilder(exception.getClass().getSimpleName()).append(" ")
+                .append(exception.getMessage()),
+                HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
