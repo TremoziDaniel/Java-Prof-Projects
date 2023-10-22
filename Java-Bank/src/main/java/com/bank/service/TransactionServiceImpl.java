@@ -53,8 +53,8 @@ public class TransactionServiceImpl implements TransactionService {
         repository.deleteById(id);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public Transaction transfer(String creditAccId, String debitAccId, BigDecimal amount) {
         Account creditAcc = accountService.getById(creditAccId);
         Account debitAcc = accountService.getById(debitAccId);
