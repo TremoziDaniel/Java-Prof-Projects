@@ -36,9 +36,8 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestParam Long managerId,
-                       @RequestBody ProductDto product) {
-        return service.create(managerId, converter.toEntity(product)).getId();
+    public Long create(@RequestBody ProductDto product) {
+        return service.create(product.getManagerId(), product.getCurrency(), converter.toEntity(product)).getId();
     }
 
     @PutMapping("/{id}")

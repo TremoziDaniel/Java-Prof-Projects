@@ -24,7 +24,7 @@ public class AgreementDto {
 
     private boolean status;
 
-    private String currencyAbb;
+    private String currency;
 
     private BigDecimal sum;
 

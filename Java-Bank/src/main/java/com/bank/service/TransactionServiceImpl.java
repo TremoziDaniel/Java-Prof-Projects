@@ -7,7 +7,6 @@ import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.domain.exception.NotEnoughFundsException;
 import com.bank.repository.TransactionRepository;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +30,7 @@ public class TransactionServiceImpl implements TransactionService {
     public List<Transaction> getAll() {
         List<Transaction> transactions = repository.findAll();
         if (transactions.isEmpty()) {
-            throw new EntityNotFoundException("Transactions");
+            throw new EntityNotFoundException("Transactions.");
         }
 
         return transactions;
@@ -40,7 +39,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Transaction %d", id)));
+                new EntityNotFoundException(String.format("Transaction %d.", id)));
     }
 
     @Override
@@ -66,7 +65,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         return repository.save(new Transaction(creditAcc, debitAcc, TransactionType.PERSONAL,
                 creditAcc.getCurrency(), amount, String.format("%s transaction on %s %s from iban %s to iban %s.",
-                        description, amount, creditAcc.getCurrency().getCurrencyAbb(), creditAccIban, debitAccIban),
+                description.isEmpty() ? "Private" : description, amount, creditAcc.getCurrency().getCurrencyAbb(),
+                creditAccIban, debitAccIban),
                 LocalDateTime.now()));
     }
 

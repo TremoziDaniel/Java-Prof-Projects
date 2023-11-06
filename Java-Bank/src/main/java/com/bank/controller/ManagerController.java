@@ -39,9 +39,8 @@ public class ManagerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestParam Long personalDataId,
-                       @RequestBody ManagerDto manager) {
-        return service.create(personalDataId, converter.toEntity(manager)).getId();
+    public Long create(@RequestBody ManagerDto manager) {
+        return service.create(manager.getPersonalDataId(), converter.toEntity(manager)).getId();
     }
 
     @PutMapping("/{id}")

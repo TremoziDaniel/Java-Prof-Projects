@@ -15,7 +15,7 @@ public class ClientConverter implements EntityConverter<Client, ClientDto>{
     @Override
     public ClientDto toDto(Client client) {
         return new ClientDto(client.getId(), client.getManager().getId(), client.isStatus(),
-                client.getTaxCode(), client.getCreatedAt(), client.getUpdatedAt());
+                client.getTaxCode(), null, client.getCreatedAt(), client.getUpdatedAt());
     }
 
     @Override

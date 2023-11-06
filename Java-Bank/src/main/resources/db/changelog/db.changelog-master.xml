@@ -34,11 +34,11 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="manager_pk"/>
             </column>
-            <column name="personal_data_id" type="bigint">
-                <constraints nullable="false" unique="true"/>
-            </column>
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
+            </column>
+            <column name="personal_data_id" type="bigint">
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
@@ -271,7 +271,7 @@
 
         <comment>Managers</comment>
         <sql>
-            INSERT INTO managers VALUES (1, 1, true);
+            INSERT INTO managers VALUES (1, true, 1);
         </sql>
 
         <comment>Clients</comment>

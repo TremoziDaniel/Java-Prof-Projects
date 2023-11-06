@@ -1,6 +1,10 @@
 package com.bank.service;
 
+import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Agreement;
+import com.bank.domain.entity.Currency;
+import com.bank.domain.entity.Product;
+import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.AgreementRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +23,13 @@ public class AgreementServiceImpl implements AgreementService {
 
     private final ProductService productService;
 
+    private final CurrencyService currencyService;
+
     @Override
     public List<Agreement> getAll() {
         List<Agreement> agreements = repository.findAll();
         if (agreements.isEmpty()) {
-            throw new EntityNotFoundException("Agreements");
+            throw new EntityNotFoundException("Agreements.");
         }
 
         return agreements;
@@ -32,13 +38,25 @@ public class AgreementServiceImpl implements AgreementService {
     @Override
     public Agreement getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Agreement %d", id)));
+                new EntityNotFoundException(String.format("Agreement %d.", id)));
     }
 
     @Override
-    public Agreement create(String accountId, Long productId, Agreement agreement) {
-        agreement.setAccount(accountService.getById(accountId));
-        agreement.setProduct(productService.getById(productId));
+    public Agreement create(String accountIban, Long productId, String currencyAbb, Agreement agreement) {
+        Account account = accountService.getByIban(accountIban);
+        Product product = productService.getById(productId);
+        Currency currency = currencyService.getByAbb(currencyAbb);
+
+        if (!account.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Account %s is not available.", accountIban));
+        } if (!product.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Product %d is not available.", productId));
+        }
+
+        agreement.setAccount(account);
+        agreement.setProduct(product);
+        agreement.setCurrency(currency);
+        agreement.setCreatedAt(LocalDateTime.now());
 
         return repository.save(agreement);
     }

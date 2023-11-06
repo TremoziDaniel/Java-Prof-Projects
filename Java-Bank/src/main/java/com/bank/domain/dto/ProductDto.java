@@ -20,7 +20,7 @@ public class ProductDto {
 
     private boolean status;
 
-    private String currencyAbb;
+    private String currency;
 
     private double interestRate;
 

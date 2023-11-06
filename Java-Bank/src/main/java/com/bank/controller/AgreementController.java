@@ -35,10 +35,10 @@ public class AgreementController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestParam String accountId,
-                       @RequestParam Long productId,
-                       @RequestBody AgreementDto agreement) {
-        return service.create(accountId, productId, converter.toEntity(agreement)).getId();
+    public Long create(@RequestBody AgreementDto agreement) {
+        return service.create(
+                agreement.getAccountIban(), agreement.getProductId(), agreement.getCurrency(),
+                converter.toEntity(agreement)).getId();
     }
 
     @PutMapping("/{id}")

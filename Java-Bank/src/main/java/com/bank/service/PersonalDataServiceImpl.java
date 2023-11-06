@@ -19,7 +19,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     public List<PersonalData> getAll() {
         List<PersonalData> personalData =  repository.findAll();
         if (personalData.isEmpty()) {
-            throw new EntityNotFoundException("PersonalData");
+            throw new EntityNotFoundException("PersonalData.");
         }
 
         return personalData;
@@ -28,7 +28,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     @Override
     public PersonalData getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Personal Data %d", id)));
+                new EntityNotFoundException(String.format("Personal Data %d.", id)));
     }
 
     @Override

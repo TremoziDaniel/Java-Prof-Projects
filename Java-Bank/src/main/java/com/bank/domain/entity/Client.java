@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.MERGE)
@@ -47,7 +46,11 @@ public class Client {
 
     public Client(UUID id, Manager manager, boolean status, String taxCode,
                   PersonalData personalData, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
+        if (id == null) {
+            this.id = UUID.randomUUID();
+        } else {
+            this.id = id;
+        }
         this.manager = manager;
         this.status = status;
         this.taxCode = taxCode;

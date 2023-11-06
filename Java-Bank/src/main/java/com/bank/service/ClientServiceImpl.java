@@ -1,6 +1,8 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Client;
+import com.bank.domain.entity.Manager;
+import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,7 +29,7 @@ public class ClientServiceImpl implements ClientService {
     public List<Client> getAll() {
         List<Client> clients = repository.findAll();
         if (clients.isEmpty()) {
-            throw new EntityNotFoundException("Clients");
+            throw new EntityNotFoundException("Clients.");
         }
 
         return clients;
@@ -35,13 +38,20 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client getById(String id) {
         return repository.findById(UUID.fromString(id)).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Client %s", id)));
+                new EntityNotFoundException(String.format("Client %s.", id)));
     }
 
     @Override
     public Client create(Long managerId, Long personalDataId, @Valid Client client) {
-        client.setManager(managerService.getById(managerId));
+        Manager manager = managerService.getById(managerId);
+
+        if (!manager.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Manager %s isn't active.", managerId));
+        }
+
+        client.setManager(manager);
         client.setPersonalData(personalDataService.getById(personalDataId));
+        client.setCreatedAt(LocalDateTime.now());
 
         return repository.save(client);
     }
@@ -74,7 +84,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client getByTaxCode(String taxCode) {
-        return repository.findByTaxCode(taxCode).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Client with tax code %s", taxCode)));
+        return Optional.of(repository.findByTaxCode(taxCode)).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Client with tax code %s.", taxCode)));
     }
 }

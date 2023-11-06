@@ -17,6 +17,8 @@ public class ManagerDto {
 
     private boolean status;
 
+    private Long personalDataId;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

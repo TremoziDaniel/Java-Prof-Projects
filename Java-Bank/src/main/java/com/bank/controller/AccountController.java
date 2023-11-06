@@ -42,7 +42,7 @@ public class AccountController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String create(@RequestBody AccountDto account) {
-        return service.create(account.getClientId(), converter.toEntity(account)).getIban();
+        return service.create(account.getClientId(), account.getCurrency(), converter.toEntity(account)).getIban();
     }
 
     @PutMapping("/{id}")
@@ -89,7 +89,7 @@ public class AccountController {
     @PatchMapping("/topUp/{iban}")
     @ResponseStatus(HttpStatus.OK)
     public String topUp (@PathVariable("iban") String iban,
-                         @RequestParam BigDecimal amount) {
+                         @RequestBody BigDecimal amount) {
         return service.topUp(iban, amount).getIban();
     }
 

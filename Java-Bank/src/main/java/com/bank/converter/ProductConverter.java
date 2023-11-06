@@ -21,8 +21,8 @@ public class ProductConverter implements EntityConverter<Product, ProductDto>{
 
     @Override
     public Product toEntity(ProductDto productDto) {
-        return new Product(productDto.getId(), null, productDto.getName(), productDto.isStatus(),
-                currencyService.getByAbb(productDto.getCurrencyAbb()), productDto.getInterestRate(),
+        return new Product(productDto.getId(), null, productDto.getName(),
+                productDto.isStatus(), null, productDto.getInterestRate(),
                 productDto.getLimit(), productDto.getCreatedAt(), productDto.getUpdatedAt());
     }
 }

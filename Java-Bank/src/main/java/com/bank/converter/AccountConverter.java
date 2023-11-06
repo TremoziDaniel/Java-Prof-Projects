@@ -2,15 +2,12 @@ package com.bank.converter;
 
 import com.bank.domain.dto.AccountDto;
 import com.bank.domain.entity.Account;
-import com.bank.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class AccountConverter implements EntityConverter<Account, AccountDto> {
-
-    private final CurrencyService currencyService;
 
     @Override
     public AccountDto toDto(Account account) {
@@ -22,7 +19,6 @@ public class AccountConverter implements EntityConverter<Account, AccountDto> {
     @Override
     public Account toEntity(AccountDto accountDto) {
         return new Account(accountDto.getId(), accountDto.getIban(), null, accountDto.getName(),
-                accountDto.isStatus(), currencyService.getByAbb(accountDto.getCurrency()),
-                accountDto.getCreatedAt(), accountDto.getUpdatedAt());
+                accountDto.isStatus(), null, accountDto.getCreatedAt(), accountDto.getUpdatedAt());
     }
 }

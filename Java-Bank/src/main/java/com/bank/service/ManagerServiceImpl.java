@@ -21,7 +21,7 @@ public class ManagerServiceImpl implements ManagerService {
     public List<Manager> getAll() {
         List<Manager> managers = repository.findAll();
         if (managers.isEmpty()) {
-            throw new EntityNotFoundException("Managers");
+            throw new EntityNotFoundException("Managers.");
         }
 
         return managers;
@@ -30,12 +30,13 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public Manager getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Manager %d", id)));
+                new EntityNotFoundException(String.format("Manager %d.", id)));
     }
 
     @Override
     public Manager create(Long personalDataId, Manager manager) {
         manager.setPersonalData(personalDataService.getById(personalDataId));
+        manager.setCreatedAt(LocalDateTime.now());
 
         return repository.save(manager);
     }

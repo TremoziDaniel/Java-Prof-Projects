@@ -12,7 +12,7 @@ public interface AccountService {
 
     Account getById(String id);
 
-    Account create(String clientId, Account account);
+    Account create(String clientId, String currencyAbb, Account account);
 
     Account update(String iban, Account account);
 

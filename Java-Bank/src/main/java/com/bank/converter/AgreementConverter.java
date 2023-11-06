@@ -2,15 +2,12 @@ package com.bank.converter;
 
 import com.bank.domain.dto.AgreementDto;
 import com.bank.domain.entity.Agreement;
-import com.bank.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class AgreementConverter implements EntityConverter<Agreement, AgreementDto>{
-
-    private final CurrencyService currencyService;
 
     @Override
     public AgreementDto toDto(Agreement agreement) {
@@ -23,8 +20,7 @@ public class AgreementConverter implements EntityConverter<Agreement, AgreementD
     @Override
     public Agreement toEntity(AgreementDto agreementDto) {
         return new Agreement(agreementDto.getId(), null, null,
-                agreementDto.getInterestRate(), agreementDto.isStatus(),
-                currencyService.getByAbb(agreementDto.getCurrencyAbb()),
+                agreementDto.getInterestRate(), agreementDto.isStatus(), null,
                 agreementDto.getSum(), agreementDto.getCreatedAt(), agreementDto.getUpdatedAt());
     }
 }

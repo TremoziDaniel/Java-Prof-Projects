@@ -1,6 +1,9 @@
 package com.bank.service;
 
+import com.bank.domain.entity.Currency;
+import com.bank.domain.entity.Manager;
 import com.bank.domain.entity.Product;
+import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +21,13 @@ public class ProductServiceImpl implements ProductService {
 
     private final ManagerService managerService;
 
+    private final CurrencyService currencyService;
+
     @Override
     public List<Product> getAll() {
         List<Product> products = repository.findAll();
         if (products.isEmpty()) {
-            throw new EntityNotFoundException("Products");
+            throw new EntityNotFoundException("Products.");
         }
 
         return products;
@@ -31,12 +36,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Product %d", id)));
+                new EntityNotFoundException(String.format("Product %d.", id)));
     }
 
     @Override
-    public Product create(Long managerId, @Valid Product product) {
-        product.setManager(managerService.getById(managerId));
+    public Product create(Long managerId, String currencyAbb, @Valid Product product) {
+        Manager manager = managerService.getById(managerId);
+        Currency currency = currencyService.getByAbb(currencyAbb);
+
+        if (!manager.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Manager %d is not available.", managerId));
+        }
+
+        product.setManager(manager);
+        product.setCurrency(currency);
+        product.setCreatedAt(LocalDateTime.now());
 
         return repository.save(product);
     }

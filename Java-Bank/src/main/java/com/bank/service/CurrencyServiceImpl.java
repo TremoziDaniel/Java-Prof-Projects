@@ -23,7 +23,7 @@ public class CurrencyServiceImpl implements CurrencyService{
     public List<Currency> getAll() {
         List<Currency> currencies = repository.findAll();
         if (currencies.isEmpty()) {
-            throw new EntityNotFoundException("Currencies");
+            throw new EntityNotFoundException("Currencies.");
         }
 
         return currencies;
@@ -32,7 +32,7 @@ public class CurrencyServiceImpl implements CurrencyService{
     @Override
     public Currency getById(Integer id) {
         return repository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Currency %d", id)));
+                new EntityNotFoundException(String.format("Currency %d.", id)));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class CurrencyServiceImpl implements CurrencyService{
                 .multiply(currencyConverted.getRate()).setScale(2, RoundingMode.HALF_EVEN);
 
         if (convertedAmount.compareTo(BigDecimal.ZERO) == 0) {
-            throw new ValueException(String.format("Converted %s %s is lover than 0.01 %s",
+            throw new ValueException(String.format("Converted %s %s is lover than 0.01 %s.",
                     amount, currencyOriginal.getCurrencyAbb(), currencyConverted.getCurrencyAbb()));
         }
 
@@ -76,6 +76,7 @@ public class CurrencyServiceImpl implements CurrencyService{
 
     @Override
     public Currency getByAbb(String abb) {
-        return repository.findByCurrencyAbb(abb);
+        return Optional.of(repository.findByCurrencyAbb(abb)).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Currency with abb %s.", abb)));
     }
 }

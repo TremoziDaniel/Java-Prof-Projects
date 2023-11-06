@@ -32,7 +32,7 @@ public class AccountSeviceImpl implements AccountService {
     public List<Account> getAll() {
         List<Account> accounts = repository.findAll();
         if (accounts.isEmpty()) {
-            throw new EntityNotFoundException("Accounts");
+            throw new EntityNotFoundException("Accounts.");
         }
 
         return accounts;
@@ -41,24 +41,26 @@ public class AccountSeviceImpl implements AccountService {
     @Override
     public Account getById(String id) {
         return repository.findById(UUID.fromString(id)).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Account %s", id)));
+                new EntityNotFoundException(String.format("Account %s.", id)));
     }
 
     @Override
-    public Account create(String clientId, @Valid Account account) {
+    public Account create(String clientId, String currencyAbb, @Valid Account account) {
         Client client = clientService.getById(clientId);
+        Currency currency = currencyService.getByAbb(currencyAbb);
 
         if (client.getAccounts().size() > 4) {
             throw new TooManyAccountsException("You opened too many accounts(4)! If you need more accounts than ask your manager to open you new one.");
         }
 
         if (client.isStatus()) {
-            account.setClient(client);
-            account.setBalance(new BigDecimal(0));
-            account.setCreatedAt(LocalDateTime.now());
-        } else {
             throw new EntityNotAvailableException(String.format("Client %s isn't active.", clientId));
         }
+
+        account.setClient(client);
+        account.setCurrency(currency);
+        account.setBalance(new BigDecimal(0));
+        account.setCreatedAt(LocalDateTime.now());
 
         return repository.save(account);
     }
@@ -109,7 +111,7 @@ public class AccountSeviceImpl implements AccountService {
 
             return repository.save(account);
         }  else {
-            throw new EntityNotAvailableException(String.format("account %s is not available", iban));
+            throw new EntityNotAvailableException(String.format("Account %s is not available.", iban));
         }
     }
 
@@ -124,7 +126,7 @@ public class AccountSeviceImpl implements AccountService {
 
             return repository.save(account);
         } else {
-            throw new EntityNotAvailableException(String.format("account %s is not available", iban));
+            throw new EntityNotAvailableException(String.format("Account %s is not available.", iban));
         }
     }
 

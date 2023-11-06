@@ -16,12 +16,12 @@ public class Manager {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Basic
+    private boolean status;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "personal_data_id", referencedColumnName = "id")
     private PersonalData personalData;
-
-    @Basic
-    private boolean status;
 
     private LocalDateTime createdAt;
 

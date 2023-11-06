@@ -44,8 +44,8 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     public Long transfer(@PathVariable("creditAccIban") String creditAccIban,
                          @PathVariable("debitAccIban") String debitAccIban,
-                         @RequestParam BigDecimal amount,
-                         @RequestParam(defaultValue = "Private") String description) {
-        return service.transfer(creditAccIban, debitAccIban, amount, description).getId();
+                         @RequestBody TransactionDto transaction) {
+        return service.transfer(
+                creditAccIban, debitAccIban, transaction.getAmount(), transaction.getDescription()).getId();
     }
 }

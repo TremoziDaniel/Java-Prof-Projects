@@ -4,11 +4,9 @@ import com.bank.converter.EntityConverter;
 import com.bank.converter.PersonalDataConverter;
 import com.bank.domain.dto.AccountDto;
 import com.bank.domain.dto.ClientDto;
-import com.bank.domain.dto.ManagerDto;
 import com.bank.domain.dto.PersonalDataDto;
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
-import com.bank.domain.entity.Manager;
 import com.bank.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,8 +23,6 @@ public class ClientController {
     private final ClientService service;
 
     private final EntityConverter<Client, ClientDto> converter;
-
-    private final EntityConverter<Manager, ManagerDto> managerConverter;
 
     private final EntityConverter<Account, AccountDto> accountConverter;
 
@@ -47,10 +43,8 @@ public class ClientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String create(@RequestParam Long managerId,
-                         @RequestParam Long personalDataId,
-                         @RequestBody ClientDto client) {
-        return service.create(managerId, personalDataId, converter.toEntity(client))
+    public String create(@RequestBody ClientDto client) {
+        return service.create(client.getManagerId(), client.getPersonalDataId(), converter.toEntity(client))
                 .getId().toString();
     }
 

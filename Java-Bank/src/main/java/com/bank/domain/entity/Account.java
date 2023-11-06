@@ -24,7 +24,6 @@ public class Account {
     // @Basic
     // @NotBlank, @JsonFormat, @JsonIgnore(@JsonBackReference, @JsonManagedReference)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
     @Pattern(message = "Invalid iban.\nExample: BI12A1B212345671234567812345678 or BI12A1B21234567",

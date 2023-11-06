@@ -10,7 +10,7 @@ public interface ProductService {
 
     Product getById(Long id);
 
-    Product create(Long managerId, Product product);
+    Product create(Long managerId, String currencyAbb, Product product);
 
     Product update(Long id, Product product);
 

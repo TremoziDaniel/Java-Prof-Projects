@@ -22,6 +22,8 @@ public class ClientDto {
 
     private String taxCode;
 
+    private Long personalDataId;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
