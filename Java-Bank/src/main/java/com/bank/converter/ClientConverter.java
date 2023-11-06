@@ -1,27 +1,20 @@
 package com.bank.converter;
 
 import com.bank.domain.dto.ClientDto;
-import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
 import com.bank.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
+@RequiredArgsConstructor
 public class ClientConverter implements EntityConverter<Client, ClientDto>{
 
-    @Autowired
-    private ClientService service;
+    private final ClientService service;
 
     @Override
     public ClientDto toDto(Client client) {
-        String managerName = new StringBuilder().append(client.getManager().getPersonalData().getFirstName())
-                .append(" ").append(client.getManager().getPersonalData().getFirstName()).toString();
-
-        return new ClientDto(client.getId(), managerName, client.isStatus(),
+        return new ClientDto(client.getId(), client.getManager().getId(), client.isStatus(),
                 client.getTaxCode(), client.getCreatedAt(), client.getUpdatedAt());
     }
 

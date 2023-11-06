@@ -1,34 +1,32 @@
 package com.bank.domain.entity;
 
 import com.bank.domain.enums.TransactionType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transactions")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "debit_account_id", referencedColumnName = "id")
     private Account creditAccount;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "credit_account_id", referencedColumnName = "id")
     private Account debitAccount;
 
@@ -45,93 +43,14 @@ public class Transaction {
 
     private LocalDateTime completedAt;
 
-    public Transaction() {
-    }
-
-    public Transaction(long id, Account debitAccount, Account creditAccount, TransactionType type,
-                       Currency currency, BigDecimal amount, String description, LocalDateTime completedAt) {
-        this.id = id;
+    public Transaction(Account creditAccount, Account debitAccount, TransactionType type, Currency currency,
+                       BigDecimal amount, String description, LocalDateTime completedAt) {
         this.creditAccount = creditAccount;
         this.debitAccount = debitAccount;
         this.type = type;
         this.currency = currency;
         this.amount = amount;
         this.description = description;
-        this.completedAt = completedAt;
-    }
-
-    public Transaction(Account debitAccount, Account creditAccount, TransactionType type,
-                       Currency currency, BigDecimal amount, String description, LocalDateTime completedAt) {
-        this.creditAccount = creditAccount;
-        this.debitAccount = debitAccount;
-        this.type = type;
-        this.currency = currency;
-        this.amount = amount;
-        this.description = description;
-        this.completedAt = completedAt;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Account getDebitAccount() {
-        return debitAccount;
-    }
-
-    public void setDebitAccount(Account debitAccount) {
-        this.debitAccount = debitAccount;
-    }
-
-    public Account getCreditAccount() {
-        return creditAccount;
-    }
-
-    public void setCreditAccount(Account creditAccount) {
-        this.creditAccount = creditAccount;
-    }
-
-    public TransactionType getType() {
-        return type;
-    }
-
-    public void setType(TransactionType type) {
-        this.type = type;
-    }
-
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(LocalDateTime completedAt) {
         this.completedAt = completedAt;
     }
 

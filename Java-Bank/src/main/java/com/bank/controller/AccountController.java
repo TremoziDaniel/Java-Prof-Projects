@@ -7,7 +7,7 @@ import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Transaction;
 import com.bank.service.AccountService;
 import javafx.util.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +17,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("accounts")
+@RequiredArgsConstructor
 public class AccountController {
-    // Ask about response entities, methods for setting other entities just by id?, managing accounts on client side?
-    // @ComponentScan(@Import), @Configuration, @ModelAttribute, @Valid
+    // @ComponentScan(@Import), @Configuration, @ModelAttribute
     private final AccountService service;
 
     private final EntityConverter<Account, AccountDto> converter;
-    //private final AccountConverter converter;
-    @Autowired
-    private EntityConverter<Transaction, TransactionDto> transactionConverter;
 
-    public AccountController(AccountService service,
-                             EntityConverter<Account, AccountDto> converter) {
-        this.service = service;
-        this.converter = converter;
-    }
+    private final EntityConverter<Transaction, TransactionDto> transactionConverter;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -46,17 +39,17 @@ public class AccountController {
         return converter.toDto(service.getById(id));
     }
 
-    @PostMapping("/{clientId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountDto create(@PathVariable String clientId, @RequestBody AccountDto account) {
-        return converter.toDto(service.create(clientId, converter.toEntity(account)));
+    public String create(@RequestBody AccountDto account) {
+        return service.create(account.getClientId(), converter.toEntity(account)).getIban();
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public AccountDto update(@PathVariable("id") String id,
-                             @RequestBody AccountDto account) {
-        return converter.toDto(service.update(id, converter.toEntity(account)));
+    public String update(@PathVariable("id") String id,
+                         @RequestBody AccountDto account) {
+        return service.update(id, converter.toEntity(account)).getIban();
     }
 
     @DeleteMapping("/{id}")
@@ -65,36 +58,44 @@ public class AccountController {
         service.delete(id);
     }
 
-    @GetMapping("/{id}/balance")
+    @GetMapping("/{iban}/balance")
     @ResponseStatus(HttpStatus.OK)
-    public Pair<String, BigDecimal> getBalance(@PathVariable("id") String id) {
-        return service.getBalance(id);
+    public Pair<String, BigDecimal> getBalance(@PathVariable("iban") String iban) {
+        Account account = service.getByIban(iban);
+
+        return new Pair<>(account.getCurrency().getCurrencyAbb(), account.getBalance());
     }
 
-    @GetMapping("/{id}/transactions")
+    @GetMapping("/{iban}/transactions")
     @ResponseStatus(HttpStatus.OK)
-    public List<TransactionDto> getTransactions(@PathVariable("id") String id) {
-        return service.getTransactions(id).stream().map(
+    public List<TransactionDto> getTransactions(@PathVariable("iban") String iban) {
+        return service.getTransactions(iban).stream().map(
                 transactionConverter::toDto).collect(Collectors.toList());
     }
 
-    @PatchMapping("/changeStatus/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeStatus(@PathVariable("id") String id) {
-        service.changeStatus(id);
+    @PatchMapping("/changeStatus/{iban}")
+    @ResponseStatus(HttpStatus.OK)
+    public String changeStatus(@PathVariable("iban") String iban) {
+        return service.changeStatus(iban).getIban();
     }
 
-    @PatchMapping("/changeCurrency/{id}/{currencyId}")
+    @PatchMapping("/changeCurrency/{iban}/{currencyAbb}")
     @ResponseStatus(HttpStatus.OK)
-    public AccountDto changeCurrency(@PathVariable("id") String id,
-                                     @PathVariable("currencyId") int currencyId) {
-        return converter.toDto(service.changeCurrency(id, currencyId));
+    public String changeCurrency(@PathVariable("iban") String iban,
+                                 @PathVariable("currencyAbb") String currencyAbb) {
+        return service.changeCurrency(iban, currencyAbb).getIban();
     }
 
-    @PatchMapping("/topup/{id}/{amount}")
+    @PatchMapping("/topUp/{iban}")
     @ResponseStatus(HttpStatus.OK)
-    public AccountDto topUp (@PathVariable("id") String id,
-                             @PathVariable("amount") BigDecimal amount) {
-        return converter.toDto(service.topUp(id, amount));
+    public String topUp (@PathVariable("iban") String iban,
+                         @RequestParam BigDecimal amount) {
+        return service.topUp(iban, amount).getIban();
+    }
+
+    @GetMapping("/iban/{iban}")
+    @ResponseStatus(HttpStatus.OK)
+    public AccountDto getByIban(@PathVariable("iban") String iban) {
+        return converter.toDto(service.getByIban(iban));
     }
 }

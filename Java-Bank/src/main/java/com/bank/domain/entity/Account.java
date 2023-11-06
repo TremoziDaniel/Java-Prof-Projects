@@ -1,41 +1,45 @@
 package com.bank.domain.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "accounts")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Account {
-
-    // transactions, relation doesn't exit, dependency(fetch cascade), fk_keys, h2 and postgres diff
-    // mappedBy fields on other side of joining, constructors, @Basic, datetime @Temporal(timestamp, date, time)
-    // UUID postgres error, Dates creation
-    // @Pattern, @NotBlank, @JsonFormat, @JsonIgnore(@JsonBackReference, @JsonManagedReference)
+    // @Basic
+    // @NotBlank, @JsonFormat, @JsonIgnore(@JsonBackReference, @JsonManagedReference)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @Pattern(message = "Invalid iban.\nExample: BI12A1B212345671234567812345678 or BI12A1B21234567",
+            regexp = "^[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([0-9]?){0,16}$")
+    private String iban;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
+    @Size(message = "Account name length must be between 3 and 255 characters.",
+            min = 3, max = 255)
     private String name;
 
+    @Basic
     private boolean status;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -44,111 +48,52 @@ public class Account {
 
     private BigDecimal balance;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "transactions", referencedColumnName = "id")
-    private List<Transaction> transactions = new ArrayList<>();
+    @OneToMany(mappedBy = "creditAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Transaction> transactionsCredit = new ArrayList<>();
+
+    @OneToMany(mappedBy = "debitAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Transaction> transactionsDebit = new ArrayList<>();
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    public Account() {
-    }
-
-    public Account(UUID id, Client client, String name, boolean status, Currency currency,
-                   BigDecimal balance, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
+    public Account(UUID id, String iban, Client client, String name, boolean status,
+                   Currency currency, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        if (id == null) {
+            this.id = UUID.randomUUID();
+        } else {
+            this.id = id;
+        }
+        this.iban = iban;
         this.client = client;
         this.name = name;
         this.status = status;
         this.currency = currency;
-        this.balance = balance;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public UUID getId() {
-        return id;
-    }
+    public List<Transaction> compactTransactions() {
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.addAll(transactionsCredit);
+        transactions.addAll(transactionsDebit);
+        transactions.sort(Comparator.comparing(Transaction::getCompletedAt));
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public List<Transaction> getTransactions() {
         return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     @Override
     public String toString() {
         return "Account{" +
                 "id=" + id +
-                ", client=" + client.getId() +
+                ", iban='" + iban + '\'' +
+                ", client=" + client +
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", currency=" + currency +
                 ", balance=" + balance +
-                ", transactions=" + transactions.stream().map(Transaction::getId).collect(Collectors.toList()) +
+                ", transactions=" + compactTransactions().stream().map(Transaction::getId).collect(Collectors.toList()) +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

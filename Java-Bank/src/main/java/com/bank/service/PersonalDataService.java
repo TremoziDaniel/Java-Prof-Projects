@@ -6,19 +6,13 @@ import java.util.List;
 
 public interface PersonalDataService {
 
-    public List<PersonalData> getAll();
+    List<PersonalData> getAll();
 
-    public PersonalData getById(long id);
+    PersonalData getById(Long id);
 
-    public PersonalData create(PersonalData personalData);
+    PersonalData create(PersonalData personalData);
 
-    public PersonalData update(long id, PersonalData personalData);
+    PersonalData update(Long id, PersonalData personalData);
 
-    public void delete(long id);
-
-    public String getPhoneNumber(long id);
-
-    public String getEmail(long id);
-
-    public String getPassword(long id);
+    void delete(Long id);
 }

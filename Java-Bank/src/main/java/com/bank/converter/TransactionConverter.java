@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 public class TransactionConverter implements EntityConverter<Transaction, TransactionDto> {
     @Override
     public TransactionDto toDto(Transaction transaction) {
-        return new TransactionDto(transaction.getId(), transaction.getDebitAccount().getName(),
-                transaction.getCreditAccount().getName(), transaction.getType(),
+        return new TransactionDto(transaction.getId(), transaction.getCreditAccount().getIban(),
+                transaction.getDebitAccount().getIban(), transaction.getType(),
                 transaction.getCurrency().getCurrencyAbb(), transaction.getAmount(),
                 transaction.getDescription(), transaction.getCompletedAt());
     }
 
     @Override
     public Transaction toEntity(TransactionDto transactionDto) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

@@ -9,9 +9,8 @@ public class ManagerConverter implements EntityConverter<Manager, ManagerDto>{
 
     @Override
     public ManagerDto toDto(Manager manager) {
-        return new ManagerDto(manager.getId(),
-                new PersonalDataConverter().toDto(manager.getPersonalData()),
-                manager.isStatus(), manager.getCreatedAt(), manager.getUpdatedAt());
+        return new ManagerDto(manager.getId(), manager.isStatus(),
+                manager.getCreatedAt(), manager.getUpdatedAt());
     }
 
     @Override

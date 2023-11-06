@@ -1,64 +1,58 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Product;
-import com.bank.domain.exception.CannotBeCreatedException;
-import com.bank.domain.exception.ItemNotFoundException;
+import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
 
-    @Autowired
-    private ManagerService managerService;
-
-    public ProductServiceImpl(ProductRepository repository) {
-        this.repository = repository;
-    }
+    private final ManagerService managerService;
 
     @Override
     public List<Product> getAll() {
         List<Product> products = repository.findAll();
         if (products.isEmpty()) {
-            throw new ItemNotFoundException("Products");
+            throw new EntityNotFoundException("Products");
         }
 
         return products;
     }
 
     @Override
-    public Product getById(long id) {
+    public Product getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Product %d", id)));
+                new EntityNotFoundException(String.format("Product %d", id)));
     }
 
     @Override
-    public Product create(long managerId, Product product) {
-        try {
-            product.setManager(managerService.getById(managerId));
-        } catch (ItemNotFoundException e) {
-            throw new CannotBeCreatedException(String.format("Product %s", product.getId()), e);
-        }
+    public Product create(Long managerId, @Valid Product product) {
+        product.setManager(managerService.getById(managerId));
 
         return repository.save(product);
     }
 
     @Override
-    public Product update(long id, Product product) {
+    public Product update(Long id, @Valid Product product) {
         Product oldProduct = getById(id);
         product.setId(id);
         product.setManager(oldProduct.getManager());
+        product.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(product);
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         repository.deleteById(id);
     }
 }

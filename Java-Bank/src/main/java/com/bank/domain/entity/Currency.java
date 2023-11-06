@@ -1,75 +1,30 @@
 package com.bank.domain.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "currencies")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Currency {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
+    @Pattern(message = "Currency name starts with capital letter, must be longer tha currency abbreviation to 100 characters long.",
+            regexp = "[A-Z].{3,100}")
     private String currencyName;
 
+    @Pattern(message = "Currency abbreviation must consist only of 3 capital letters.",
+            regexp = "[A-Z]{3}")
     private String currencyAbb;
 
     private BigDecimal rate;
-
-    public Currency() {
-    }
-
-    public Currency(int id, String currencyName, String currencyAbb, BigDecimal rate) {
-        this.id = id;
-        this.currencyName = currencyName;
-        this.currencyAbb = currencyAbb;
-        this.rate = rate;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCurrencyName() {
-        return currencyName;
-    }
-
-    public void setCurrencyName(String currencyName) {
-        this.currencyName = currencyName;
-    }
-
-    public String getCurrencyAbb() {
-        return currencyAbb;
-    }
-
-    public void setCurrencyAbb(String currencyAbb) {
-        this.currencyAbb = currencyAbb;
-    }
-
-    public BigDecimal getRate() {
-        return rate;
-    }
-
-    public void setRate(BigDecimal rate) {
-        this.rate = rate;
-    }
-
-    @Override
-    public String toString() {
-        return "Currency{" +
-                "id=" + id +
-                ", currencyName='" + currencyName + '\'' +
-                ", currencyAbb='" + currencyAbb + '\'' +
-                ", rate=" + rate +
-                '}';
-    }
 }

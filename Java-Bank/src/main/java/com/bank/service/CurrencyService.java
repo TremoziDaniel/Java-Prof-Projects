@@ -7,19 +7,19 @@ import java.util.List;
 
 public interface CurrencyService {
 
-    public List<Currency> getAll();
+    List<Currency> getAll();
 
-    public Currency getById(int id);
+    Currency getById(Integer id);
 
-    public Currency create(Currency currency);
+    Currency create(Currency currency);
 
-    public Currency update(int id, Currency currency);
+    Currency update(Integer id, Currency currency);
 
-    public void delete(int id);
+    void delete(Integer id);
 
-    public Currency changeRate(int id, BigDecimal rate);
+    Currency changeRate(Integer id, BigDecimal rate);
 
-    public BigDecimal convertCurrency(int currencyOriginal, int currencyConverter, BigDecimal amount);
+    BigDecimal convertCurrency(Currency currencyOriginal, Currency currencyConverted, BigDecimal amount);
 
-    public Currency getCurrencyByAbb(String abb);
+    Currency getByAbb(String abb);
 }

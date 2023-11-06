@@ -6,9 +6,8 @@ import com.bank.domain.dto.ManagerDto;
 import com.bank.domain.dto.PersonalDataDto;
 import com.bank.domain.entity.Manager;
 import com.bank.service.ManagerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,20 +15,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("managers")
+@RequiredArgsConstructor
 public class ManagerController {
 
     private final ManagerService service;
 
     private final EntityConverter<Manager, ManagerDto> converter;
 
-    @Autowired
-    private PersonalDataConverter personalDataConverter;
-
-    public ManagerController(ManagerService service,
-                             EntityConverter<Manager, ManagerDto> converter) {
-        this.service = service;
-        this.converter = converter;
-    }
+    private final PersonalDataConverter personalDataConverter;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -40,38 +33,38 @@ public class ManagerController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ManagerDto getById(@PathVariable("id") long id) {
+    public ManagerDto getById(@PathVariable("id") Long id) {
         return converter.toDto(service.getById(id));
     }
 
-    @PostMapping("/{personalDataId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ManagerDto create(@PathVariable("personalDataId") long personalDataId,
-                             @RequestBody ManagerDto manager) {
-        return converter.toDto(service.create(personalDataId, converter.toEntity(manager)));
+    public Long create(@RequestParam Long personalDataId,
+                       @RequestBody ManagerDto manager) {
+        return service.create(personalDataId, converter.toEntity(manager)).getId();
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ManagerDto update(@PathVariable("id") long id, @RequestBody ManagerDto manager) {
-        return converter.toDto(service.update(id, converter.toEntity(manager)));
+    public Long update(@PathVariable("id") Long id, @RequestBody ManagerDto manager) {
+        return service.update(id, converter.toEntity(manager)).getId();
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") long id) {
+    public void delete(@PathVariable("id") Long id) {
         service.delete(id);
     }
 
     @PatchMapping("/changeStatus/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeStatus(@PathVariable("id") long id) {
-        service.changeStatus(id);
+    @ResponseStatus(HttpStatus.OK)
+    public Long changeStatus(@PathVariable("id") Long id) {
+        return service.changeStatus(id).getId();
     }
 
     @GetMapping("/{id}/personalData")
     @ResponseStatus(HttpStatus.OK)
-    public PersonalDataDto getPersonalData(@PathVariable("id") long id) {
+    public PersonalDataDto getPersonalData(@PathVariable("id") Long id) {
         return personalDataConverter.toDto(service.getById(id).getPersonalData());
     }
 }

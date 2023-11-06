@@ -1,15 +1,20 @@
 package com.bank.domain.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class PersonalData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String firstName;
 
@@ -23,134 +28,18 @@ public class PersonalData {
 
     private String houseNumber;
 
-    private int apartmentNumber;
+    private Integer apartmentNumber;
 
+    @Pattern(message = "Invalid phone number.\nExample: +(999)-999-999-99-99",
+            regexp = "^\\+?[(]?[0-9]{1,3}[)]?[-\\s.]?[0-9]{1,2}[-\\s.]?[0-9][-\\s.]?[0-9][-\\s.]?[0-9]{2}[-\\s.]?[0-9]{2}[-\\s.]?[0-9]{2}$")
     private String phoneNumber;
 
+    @Pattern(message = "Invalid email.\nExample: email1example@domain.com",
+            regexp = "^([a-zA-Z0-9_\\-.]{3,63})@([a-zA-Z0-9_\\-.]+)\\.([a-zA-Z]{2,5})$")
     private String email;
 
+    @Pattern(message = "Invalid password.\n" +
+            "Password must contain at least 1 upper an lover case latin letter, 1 number, 1 special symbol and be from 8 to 20 symbol long",
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$")
     private String password;
-
-    public PersonalData() {
-    }
-
-    public PersonalData(long id, String firstName, String lastName, String country, String city, String street,
-                        String houseNumber, int apartmentNumber, String phoneNumber, String email, String password) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.country = country;
-        this.city = city;
-        this.street = street;
-        this.houseNumber = houseNumber;
-        this.apartmentNumber = apartmentNumber;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.password = password;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getHouseNumber() {
-        return houseNumber;
-    }
-
-    public void setHouseNumber(String houseNumber) {
-        this.houseNumber = houseNumber;
-    }
-
-    public int getApartmentNumber() {
-        return apartmentNumber;
-    }
-
-    public void setApartmentNumber(int apartmentNumber) {
-        this.apartmentNumber = apartmentNumber;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "Info{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", country='" + country + '\'' +
-                ", city='" + city + '\'' +
-                ", street='" + street + '\'' +
-                ", houseNumber='" + houseNumber + '\'' +
-                ", apartmentNumber=" + apartmentNumber +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
 }

@@ -1,77 +1,66 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Manager;
-import com.bank.domain.entity.PersonalData;
-import com.bank.domain.exception.CannotBeCreatedException;
-import com.bank.domain.exception.ItemNotFoundException;
+import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.ManagerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ManagerServiceImpl implements ManagerService {
 
     private final ManagerRepository repository;
 
-    @Autowired
-    private PersonalDataService personalDataService;
-
-    public ManagerServiceImpl(ManagerRepository repository) {
-        this.repository = repository;
-    }
+    private final PersonalDataService personalDataService;
 
     @Override
     public List<Manager> getAll() {
         List<Manager> managers = repository.findAll();
         if (managers.isEmpty()) {
-            throw new ItemNotFoundException("Managers");
+            throw new EntityNotFoundException("Managers");
         }
 
         return managers;
     }
 
     @Override
-    public Manager getById(long id) {
+    public Manager getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Manager %d", id)));
+                new EntityNotFoundException(String.format("Manager %d", id)));
     }
 
     @Override
-    public Manager create(long personalDataId, Manager manager) {
-        try {
-            manager.setPersonalData(personalDataService.getById(personalDataId));
-        } catch (ItemNotFoundException e) {
-            throw new CannotBeCreatedException(String.format("Manager %s", manager.getId()), e);
-        }
+    public Manager create(Long personalDataId, Manager manager) {
+        manager.setPersonalData(personalDataService.getById(personalDataId));
 
         return repository.save(manager);
     }
 
     @Override
-    public Manager update(long id, Manager manager) {
+    public Manager update(Long id, Manager manager) {
         Manager oldManager = getById(id);
         manager.setId(id);
         manager.setPersonalData(oldManager.getPersonalData());
+        manager.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(manager);
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         repository.deleteById(id);
     }
 
     @Override
-    public void changeStatus(long id) {
+    public Manager changeStatus(Long id) {
         Manager manager = getById(id);
         manager.setStatus(!manager.isStatus());
-        repository.save(manager);
-    }
+        manager.setUpdatedAt(LocalDateTime.now());
 
-    @Override
-    public PersonalData getPersonalData(long id) {
-        return getById(id).getPersonalData();
+        return repository.save(manager);
     }
 }

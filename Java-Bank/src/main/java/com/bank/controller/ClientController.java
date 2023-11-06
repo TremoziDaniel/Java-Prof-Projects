@@ -10,7 +10,7 @@ import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Manager;
 import com.bank.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,25 +19,18 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("clients")
+@RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService service;
 
     private final EntityConverter<Client, ClientDto> converter;
 
-    @Autowired
-    private EntityConverter<Manager, ManagerDto> managerConverter;
+    private final EntityConverter<Manager, ManagerDto> managerConverter;
 
-    @Autowired
-    private EntityConverter<Account, AccountDto> accountConverter;
+    private final EntityConverter<Account, AccountDto> accountConverter;
 
-    @Autowired
-    private PersonalDataConverter personalDataConverter;
-
-    public ClientController(ClientService service, EntityConverter<Client, ClientDto> converter) {
-        this.service = service;
-        this.converter = converter;
-    }
+    private final PersonalDataConverter personalDataConverter;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -52,17 +45,20 @@ public class ClientController {
         return converter.toDto(service.getById(id));
     }
 
-    @PostMapping("/{managerId}/{personalDataId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClientDto create(@PathVariable("managerId") long managerId,
-            @PathVariable("personalDataId") long personalDataId, @RequestBody ClientDto client) {
-        return converter.toDto(service.create(managerId, personalDataId, converter.toEntity(client)));
+    public String create(@RequestParam Long managerId,
+                         @RequestParam Long personalDataId,
+                         @RequestBody ClientDto client) {
+        return service.create(managerId, personalDataId, converter.toEntity(client))
+                .getId().toString();
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ClientDto update(@PathVariable("id") String id, @RequestBody ClientDto client) {
-        return converter.toDto(service.update(id, converter.toEntity(client)));
+    public String update(@PathVariable("id") String id,
+                         @RequestBody ClientDto client) {
+        return service.update(id, converter.toEntity(client)).getId().toString();
     }
 
     @DeleteMapping("/{id}")
@@ -71,28 +67,28 @@ public class ClientController {
         service.delete(id);
     }
 
-    @GetMapping("/{id}/manager")
-    @ResponseStatus(HttpStatus.OK)
-    public ManagerDto getManager(@PathVariable("id") String id) {
-        return managerConverter.toDto(service.getManager(id));
-    }
-
-    @GetMapping("/{id}/account")
+    @GetMapping("/{id}/accounts")
     @ResponseStatus(HttpStatus.OK)
     public List<AccountDto> getAccounts(@PathVariable("id") String id) {
-        return service.getAccounts(id).stream().map(
+        return service.getById(id).getAccounts().stream().map(
                 accountConverter::toDto).collect(Collectors.toList());
     }
 
     @PatchMapping("/changeStatus/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeStatus(@PathVariable("id") String id) {
-        service.changeStatus(id);
+    @ResponseStatus(HttpStatus.OK)
+    public String changeStatus(@PathVariable("id") String id) {
+        return service.changeStatus(id).getId().toString();
     }
 
     @GetMapping("/{id}/personalData")
     @ResponseStatus(HttpStatus.OK)
     public PersonalDataDto getPersonalData(@PathVariable("id") String id) {
         return personalDataConverter.toDto(service.getById(id).getPersonalData());
+    }
+
+    @GetMapping("/taxCode/{taxCode}")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientDto getByTaxCode(@PathVariable("taxCode") String taxCode) {
+        return converter.toDto(service.getByTaxCode(taxCode));
     }
 }

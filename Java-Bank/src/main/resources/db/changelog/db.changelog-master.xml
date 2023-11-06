@@ -8,15 +8,17 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="personal" author="Danil">
+        <comment>Creating tables with personal details for authentication and authorisation.</comment>
+
         <createTable tableName="clients">
-            <column name="id" type="binary(16)">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="client_pk"/>
             </column>
             <column name="manager_id" type="bigint"/>
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="tax_code" type="varchar(20)">
+            <column name="tax_code" type="varchar(16)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="personal_data_id" type="bigint">
@@ -25,9 +27,7 @@
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
+            <column name="updated_at" type="timestamp"/>
         </createTable>
 
         <createTable tableName="managers">
@@ -43,9 +43,7 @@
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
+            <column name="updated_at" type="timestamp"/>
         </createTable>
 
         <createTable tableName="personal_data">
@@ -59,67 +57,61 @@
             <column name="street" type="varchar(255)"/>
             <column name="house_number" type="varchar(10)"/>
             <column name="apartment_number" type="int"/>
-            <column name="phone_number" type="varchar(16)">
+            <column name="phone_number" type="varchar(20)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="email" type="varchar(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="password" type="varchar(30)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <createTable tableName="currencies">
-            <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="currency_pk"/>
-            </column>
-            <column name="currency_name" type="varchar(255)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="currency_abb" type="varchar(3)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="rate" type="numeric(15,2)">
+            <column name="password" type="varchar(20)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
     <changeSet id="operational" author="Danil">
+        <comment>Creating tables that will be operational units in transactions etc.</comment>
+
         <createTable tableName="accounts">
-            <column name="id" type="binary(16)">
+            <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="account_pk"/>
             </column>
-            <column name="client_id" type="binary(16)"/>
+            <column name="iban" type="varchar(31)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="client_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
             <column name="name" type="varchar(255)"/>
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="currency_id" type="bigint"/>
-            <column name="balance" type="numeric(15,2)" defaultValue="0">
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="balance" type="numeric(15,2)" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
+            <column name="updated_at" type="timestamp"/>
         </createTable>
 
         <createTable tableName="transactions">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="transaction_pk"/>
             </column>
-            <column name="credit_account_id" type="binary(16)">
+            <column name="credit_account_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="debit_account_id" type="binary(16)">
+            <column name="debit_account_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
             <column name="type" type="varchar(20)"/>
-            <column name="currency_id" type="bigint"/>
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
             <column name="amount" type="numeric(15,2)">
                 <constraints nullable="false"/>
             </column>
@@ -134,45 +126,62 @@
                 <constraints primaryKey="true" nullable="false" primaryKeyName="product_pk"/>
             </column>
             <column name="manager_id" type="bigint"/>
-            <column name="name" type="varchar(70)"/>
+            <column name="name" type="varchar(255)"/>
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="currency_id" type="bigint"/>
-            <column name="interest_rate" type="numeric(6,4)" defaultValue="0"/>
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="interest_rate" type="numeric(6,4)"/>
             <column name="product_limit" type="int"/>
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
+            <column name="updated_at" type="timestamp"/>
         </createTable>
 
         <createTable tableName="agreements">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="agreement_pk"/>
             </column>
-            <column name="account_id" type="binary(16)"/>
+            <column name="account_id" type="uuid"/>
             <column name="product_id" type="bigint"/>
-            <column name="interest_rate" type="numeric(6,4)" defaultValue="0"/>
+            <column name="interest_rate" type="numeric(6,4)"/>
             <column name="status" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="currency_id" type="bigint"/>
+            <column name="currency_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
             <column name="sum" type="numeric(15,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="updated_at" type="timestamp"/>
+        </createTable>
+
+        <createTable tableName="currencies">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="currency_pk"/>
+            </column>
+            <column name="currency_name" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="currency_abb" type="varchar(3)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="rate" type="numeric(15,4)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
     <changeSet id="foreign_keys" author="Daniel">
+        <comment>Making foreign keys for table fields.</comment>
+
         <addForeignKeyConstraint baseTableName="clients" baseColumnNames="manager_id"
                                  constraintName="client_manager_fk" referencedTableName="managers"
                                  referencedColumnNames="id"/>
@@ -226,5 +235,69 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="sql_query" author="Daniel"/>
+    <changeSet id="sql_query" author="Daniel">
+        <comment>SQL queries to help get started in running project.</comment>
+
+        <comment>Currencies</comment>
+        <sql>
+            INSERT INTO currencies VALUES (1, 'United States dollar', 'USD', 1);
+            INSERT INTO currencies VALUES (2, 'Euro', 'EUR', 1.06);
+            INSERT INTO currencies VALUES (3, 'Japanese yen', 'JPY', 0.0066);
+            INSERT INTO currencies VALUES (4, 'Sterling', 'GBP', 1.22);
+            INSERT INTO currencies VALUES (5, 'Australian dollar', 'AUD', 0.64);
+        </sql>
+
+        <comment>Personal Data</comment>
+        <sql>
+            INSERT INTO personal_data VALUES(9223372036854775807, 'Admin', 'Admined', 'Internet',
+                                             'Server', 'Admin St.', '404/A', '0',
+                                             '+(000)-404-404-1234', 'admin@admin.com', 'Admin!2023');
+            INSERT INTO personal_data (id, first_name, last_name, country, city, street, house_number,
+                                       phone_number, email, password)
+                                            VALUES(1, 'Krok', 'Raymond', 'United States od America',
+                                                   'Oak Park', 'Linden Ave', '318', '+1 202-506-4379',
+                                                   'mcdonalds19xx@ceo.com', 'Bigmac$5*15');
+            INSERT INTo personal_data (id, first_name, last_name, country, city, street, phone_number,
+                                       email, password)
+                                            VALUES(2, 'Jose', 'Bove', 'France', 'Talence',
+                                                   'Rue du Professeur Arnozan', '+33 5 56 84 78 33',
+                                                   'talencelamairie@gov.fr', 'vivaCuisine&amp;1789');
+            INSERT INTO personal_data (id, first_name, last_name, country, city, street, house_number,
+                                       phone_number, email, password)
+                                            VALUES (3, 'Mitsui', 'Toyota', 'Japan', 'Kyoto', 'Iwagamicho',
+                                                    '724', '+81 75-841-7141', 'loveToyota@post.jp',
+                                                    'Supaka@1996')
+        </sql>
+
+        <comment>Managers</comment>
+        <sql>
+            INSERT INTO managers VALUES (1, 1, true);
+        </sql>
+
+        <comment>Clients</comment>
+        <sql>
+            INSERT INTO clients VALUES ('A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11', 1, true, 'FBVIPL00B7369C1B', 2);
+            INSERT INTO clients VALUES ('A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A12', 1, true, 'JPNUMB132CKL457A', 3)
+        </sql>
+
+        <comment>Accounts</comment>
+        <sql>
+            INSERT INTO accounts VALUES ('A81BC81B-DEAD-4E5D-ABFF-90865D1E13B1', 'FR76BCO130002677',
+                                         'A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11',
+                                         'Coordonnees professionnelles du representant francais Jose Bove',
+                                         true, 2);
+            INSERT INTO accounts VALUES ('A81BC81B-DEAD-4E5D-ABFF-90865D1E13B2', 'DZ9312BP49367001123267095467589',
+                                         'A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A12', 'Mr. Toyota account', true, 3, 1000)
+        </sql>
+
+        <comment>Products</comment>
+        <sql>
+            INSERT INTO products VALUES (1, 1, 'Brochures', true, 2, 12.9871, 100000);
+        </sql>
+
+        <comment>Agreements</comment>
+        <sql>
+            INSERT INTO agreements VALUES (1, 'A81BC81B-DEAD-4E5D-ABFF-90865D1E13B1', 1, 4.703, true, 2, 9874.99);
+        </sql>
+    </changeSet>
 </databaseChangeLog>

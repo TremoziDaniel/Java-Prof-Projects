@@ -1,14 +1,14 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Account;
-import com.bank.domain.entity.Currency;
 import com.bank.domain.entity.Transaction;
 import com.bank.domain.enums.TransactionType;
 import com.bank.domain.exception.EntityNotAvailableException;
-import com.bank.domain.exception.ItemNotFoundException;
+import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.domain.exception.NotEnoughFundsException;
 import com.bank.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,65 +18,69 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
-    @Autowired
-    private CurrencyService currencyService;
-
-    public TransactionServiceImpl(TransactionRepository repository) {
-        this.repository = repository;
-    }
+    private final CurrencyService currencyService;
 
     @Override
     public List<Transaction> getAll() {
         List<Transaction> transactions = repository.findAll();
         if (transactions.isEmpty()) {
-            throw new ItemNotFoundException("Transactions");
+            throw new EntityNotFoundException("Transactions");
         }
 
         return transactions;
     }
 
     @Override
-    public Transaction getById(long id) {
+    public Transaction getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Transaction %d", id)));
+                new EntityNotFoundException(String.format("Transaction %d", id)));
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         repository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public Transaction transfer(String creditAccId, String debitAccId, BigDecimal amount) {
-        Account creditAcc = accountService.getById(creditAccId);
-        Account debitAcc = accountService.getById(debitAccId);
-        Currency currency = creditAcc.getCurrency();
+    public Transaction transfer(String creditAccIban, String debitAccIban, BigDecimal amount, String description) {
+        Account creditAcc = accountService.getByIban(creditAccIban);
+        Account debitAcc = accountService.getByIban(debitAccIban);
 
-        if (!creditAcc.isStatus()) {
-            throw new EntityNotAvailableException(String.format("credit account %s isn't active", creditAccId));
-        } else if (!debitAcc.isStatus()) {
-            throw new EntityNotAvailableException(String.format("debit account %s isn't active", debitAccId));
-        }
+        validateTransaction(creditAcc, debitAcc, amount);
 
-        if (amount.compareTo(creditAcc.getBalance()) < 0) {
+        BigDecimal transferAmount = creditAcc.getCurrency().getId().equals(debitAcc.getCurrency().getId()) ?
+                amount : currencyService.convertCurrency(
+                debitAcc.getCurrency(), creditAcc.getCurrency(), amount);
+        creditAcc.setBalance(creditAcc.getBalance().subtract(amount).setScale(2, RoundingMode.HALF_EVEN));
+        creditAcc.setUpdatedAt(LocalDateTime.now());
+        debitAcc.setBalance(debitAcc.getBalance().add(transferAmount));
+        debitAcc.setUpdatedAt(LocalDateTime.now());
+
+        return repository.save(new Transaction(creditAcc, debitAcc, TransactionType.PERSONAL,
+                creditAcc.getCurrency(), amount, String.format("%s transaction on %s %s from iban %s to iban %s.",
+                        description, amount, creditAcc.getCurrency().getCurrencyAbb(), creditAccIban, debitAccIban),
+                LocalDateTime.now()));
+    }
+
+    private void validateTransaction(Account creditAcc, Account debitAcc, BigDecimal amount) {
+        if (!creditAcc.isStatus() || !creditAcc.getClient().isStatus()) {
+            throw new EntityNotAvailableException(String.format(
+                    "Credit account %s isn't active.", creditAcc.getIban()));
+        } if (!debitAcc.isStatus() || !debitAcc.getClient().isStatus()) {
+            throw new EntityNotAvailableException(String.format(
+                    "Debit account %s isn't active.", debitAcc.getIban()));
+        } if (amount.compareTo(creditAcc.getBalance()) > 0) {
             throw new NotEnoughFundsException(String.format(
-                    "Account %s have less than %.2f %s", creditAccId, amount, currency.getCurrencyAbb()));
+                    "Account %s have less than %.2f %s.",
+                    creditAcc.getIban(), amount, creditAcc.getCurrency().getCurrencyAbb()));
         }
-        // Does this save changes(account update)?
-        creditAcc.setBalance(creditAcc.getBalance().subtract(amount));
-        debitAcc.setBalance(debitAcc.getBalance().add(currencyService.convertCurrency(
-                creditAcc.getCurrency().getId(), debitAcc.getCurrency().getId(), debitAcc.getBalance()))
-                .setScale(2, RoundingMode.HALF_EVEN));
-        // Why do I need transaction field?
-        return repository.save(new Transaction(creditAcc, debitAcc, TransactionType.PERSONAL, currency,
-                amount, "successful", LocalDateTime.now()));
     }
 }

@@ -1,24 +1,20 @@
 package com.bank.service;
 
-import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Manager;
-import com.bank.domain.entity.PersonalData;
 
 import java.util.List;
 
 public interface ManagerService {
 
-    public List<Manager> getAll();
+    List<Manager> getAll();
 
-    public Manager getById(long id);
+    Manager getById(Long id);
 
-    public Manager create(long personalDataId, Manager manager);
+    Manager create(Long personalDataId, Manager manager);
 
-    public Manager update(long id, Manager manager);
+    Manager update(Long id, Manager manager);
 
-    public void delete(long id);
+    void delete(Long id);
 
-    public void changeStatus(long id);
-
-    public PersonalData getPersonalData(long id);
+    Manager changeStatus(Long id);
 }

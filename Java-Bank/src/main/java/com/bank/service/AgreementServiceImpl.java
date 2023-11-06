@@ -1,69 +1,62 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Agreement;
-import com.bank.domain.exception.CannotBeCreatedException;
-import com.bank.domain.exception.ItemNotFoundException;
+import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.AgreementRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AgreementServiceImpl implements AgreementService {
 
     private final AgreementRepository repository;
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
-    @Autowired
-    private ProductService productService;
-
-    public AgreementServiceImpl(AgreementRepository repository) {
-        this.repository = repository;
-    }
+    private final ProductService productService;
 
     @Override
     public List<Agreement> getAll() {
         List<Agreement> agreements = repository.findAll();
         if (agreements.isEmpty()) {
-            throw new ItemNotFoundException("Agreements");
+            throw new EntityNotFoundException("Agreements");
         }
 
         return agreements;
     }
 
     @Override
-    public Agreement getById(long id) {
+    public Agreement getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Agreement %d", id)));
+                new EntityNotFoundException(String.format("Agreement %d", id)));
     }
 
     @Override
-    public Agreement create(String accountId, long productId, Agreement agreement) {
-        try {
-            agreement.setAccount(accountService.getById(accountId));
-            agreement.setProduct(productService.getById(productId));
-        } catch (ItemNotFoundException e) {
-            throw new CannotBeCreatedException(String.format("agreement %s ", agreement.getId()), e);
-        }
+    public Agreement create(String accountId, Long productId, Agreement agreement) {
+        agreement.setAccount(accountService.getById(accountId));
+        agreement.setProduct(productService.getById(productId));
 
         return repository.save(agreement);
     }
 
     @Override
-    public Agreement update(long id, Agreement agreement) {
+    public Agreement update(Long id, Agreement agreement) {
         Agreement oldAgreement = getById(id);
         agreement.setId(id);
         agreement.setAccount(oldAgreement.getAccount());
         agreement.setProduct(oldAgreement.getProduct());
+        agreement.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(agreement);
     }
 
     @Override
-    public void delete(long id) {
-        repository.deleteById(id);
+    public void delete(Long id) {
+        Agreement agreement = getById(id);
+        repository.delete(agreement);
     }
 }

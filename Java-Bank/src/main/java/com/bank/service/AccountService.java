@@ -2,30 +2,29 @@ package com.bank.service;
 
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Transaction;
-import javafx.util.Pair;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface AccountService {
 
-    public List<Account> getAll();
+    List<Account> getAll();
 
-    public Account getById(String id);
+    Account getById(String id);
 
-    public Account create(String clientId, Account account);
+    Account create(String clientId, Account account);
 
-    public Account update(String id, Account account);
+    Account update(String iban, Account account);
 
-    public void delete(String id);
+    void delete(String id);
 
-    public Pair<String, BigDecimal> getBalance(String id);
+    List<Transaction> getTransactions(String iban);
 
-    public List<Transaction> getTransactions(String id);
+    Account changeStatus(String iban);
 
-    public void changeStatus(String id);
+    Account changeCurrency(String iban, String currencyAbb);
 
-    public Account changeCurrency(String id, int currencyID);
+    Account topUp(String id, BigDecimal amount);
 
-    public Account topUp(String id, BigDecimal amount);
+    Account getByIban(String iban);
 }

@@ -1,6 +1,11 @@
 package com.bank.domain.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +14,9 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "clients")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Client {
 
     @Id
@@ -19,8 +27,11 @@ public class Client {
     @JoinColumn(name = "manager_id", referencedColumnName = "id")
     private Manager manager;
 
+    @Basic
     private boolean status;
 
+    @Pattern(message = "Invalid tax code.\nExample: ABCDEF12A1B2C3DA",
+            regexp = "^[A-Z]{6}[0-9]{2}[A-Z0-9]{7}[A-Z]$")
     private String taxCode;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
@@ -28,15 +39,11 @@ public class Client {
     private PersonalData personalData;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    //@JoinColumn(name = "accounts", referencedColumnName = "id")
     private List<Account> accounts = new ArrayList<>();
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-
-    public Client() {
-    }
 
     public Client(UUID id, Manager manager, boolean status, String taxCode,
                   PersonalData personalData, LocalDateTime createdAt, LocalDateTime updatedAt) {
@@ -45,71 +52,7 @@ public class Client {
         this.status = status;
         this.taxCode = taxCode;
         this.personalData = personalData;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Manager getManager() {
-        return manager;
-    }
-
-    public void setManager(Manager manager) {
-        this.manager = manager;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
-    public PersonalData getPersonalData() {
-        return personalData;
-    }
-
-    public void setPersonalData(PersonalData personalData) {
-        this.personalData = personalData;
-    }
-
-    public List<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.createdAt = createdAt == null ? LocalDateTime.now() : createdAt;
         this.updatedAt = updatedAt;
     }
 

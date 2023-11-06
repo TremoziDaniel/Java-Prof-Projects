@@ -1,6 +1,5 @@
 package com.bank.service;
 
-import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Transaction;
 
 import java.math.BigDecimal;
@@ -8,11 +7,11 @@ import java.util.List;
 
 public interface TransactionService {
 
-    public List<Transaction> getAll();
+    List<Transaction> getAll();
 
-    public Transaction getById(long id);
+    Transaction getById(Long id);
 
-    public void delete(long id);
+    void delete(Long id);
 
-    public Transaction transfer(String creditAccId, String debitAccId, BigDecimal amount);
+    Transaction transfer(String creditAccId, String debitAccId, BigDecimal amount, String description);
 }

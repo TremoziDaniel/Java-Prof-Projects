@@ -1,41 +1,38 @@
 package com.bank.service;
 
 import com.bank.domain.entity.Account;
+import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Currency;
 import com.bank.domain.entity.Transaction;
-import com.bank.domain.exception.CannotBeCreatedException;
 import com.bank.domain.exception.EntityNotAvailableException;
-import com.bank.domain.exception.ItemNotFoundException;
+import com.bank.domain.exception.EntityNotFoundException;
+import com.bank.domain.exception.TooManyAccountsException;
 import com.bank.repository.AccountRepository;
-import javafx.util.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AccountSeviceImpl implements AccountService {
 
-    // Ask about Bad requests instead exceptions, dates, transfer method(save), @Transactional?, update?, setters~saves
     private final AccountRepository repository;
 
-    @Autowired
-    private ClientService clientService;
+    private final ClientService clientService;
 
-    @Autowired
-    private CurrencyService currencyService;
-
-    public AccountSeviceImpl(AccountRepository repository) {
-        this.repository = repository;
-    }
+    private final CurrencyService currencyService;
 
     @Override
     public List<Account> getAll() {
         List<Account> accounts = repository.findAll();
         if (accounts.isEmpty()) {
-            throw new ItemNotFoundException("Accounts");
+            throw new EntityNotFoundException("Accounts");
         }
 
         return accounts;
@@ -44,85 +41,96 @@ public class AccountSeviceImpl implements AccountService {
     @Override
     public Account getById(String id) {
         return repository.findById(UUID.fromString(id)).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Account %s", id)));
+                new EntityNotFoundException(String.format("Account %s", id)));
     }
 
     @Override
-    public List<Transaction> getTransactions(String id) {
-        Account account = getById(id);
+    public Account create(String clientId, @Valid Account account) {
+        Client client = clientService.getById(clientId);
 
-        return account.getTransactions();
-    }
+        if (client.getAccounts().size() > 4) {
+            throw new TooManyAccountsException("You opened too many accounts(4)! If you need more accounts than ask your manager to open you new one.");
+        }
 
-    @Override
-    public Account create(String clientId, Account account) {
-        try {
-            account.setClient(clientService.getById(clientId));
-        } catch (ItemNotFoundException e)
-        {
-            throw new CannotBeCreatedException(String.format("Account %s ", account.getId()), e);
+        if (client.isStatus()) {
+            account.setClient(client);
+            account.setBalance(new BigDecimal(0));
+            account.setCreatedAt(LocalDateTime.now());
+        } else {
+            throw new EntityNotAvailableException(String.format("Client %s isn't active.", clientId));
         }
 
         return repository.save(account);
     }
 
     @Override
-    public Account update(String id, Account account) {
-        Account oldAccount = getById(id);
-        account.setId(UUID.fromString(id));
+    public Account update(String iban, @Valid Account account) {
+        Account oldAccount = getById(iban);
+        account.setId(oldAccount.getId());
         account.setClient(oldAccount.getClient());
+        account.setBalance(oldAccount.getBalance());
+        account.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(account);
     }
 
     @Override
     public void delete(String id) {
-        repository.deleteById(UUID.fromString(id));
-
+        Account account = getById(id);
+        repository.delete(account);
     }
 
     @Override
-    public Pair<String, BigDecimal> getBalance(String id) {
-        Account account = getById(id);
+    public List<Transaction> getTransactions(String iban) {
+        Account account = getByIban(iban);
 
-        return new Pair<String, BigDecimal>(account.getCurrency().getCurrencyAbb(), account.getBalance());
+        return account.compactTransactions();
     }
 
-
-
     @Override
-    public void changeStatus(String id) {
-        Account account = getById(id);
+    public Account changeStatus(String iban) {
+        Account account = getByIban(iban);
         account.setStatus(!account.isStatus());
-        repository.save(account);
+        account.setUpdatedAt(LocalDateTime.now());
+
+        return repository.save(account);
     }
 
     @Override
-    public Account changeCurrency(String id, int currencyID) {
-        Account account = getById(id);
+    public Account changeCurrency(String iban, String currencyAbb) {
+        Account account = getByIban(iban);
 
         if (account.isStatus()) {
-            Currency currency = currencyService.getById(currencyID);
+            Currency currency = currencyService.getByAbb(currencyAbb);
             account.setBalance(currencyService.convertCurrency(
-                    account.getCurrency().getId(), currency.getId(), account.getBalance()));
+                    account.getCurrency(), currency, account.getBalance()));
             account.setCurrency(currency);
+            account.setUpdatedAt(LocalDateTime.now());
 
-            return account;
+            return repository.save(account);
         }  else {
-            throw new EntityNotAvailableException(String.format("account %s is not available", id));
+            throw new EntityNotAvailableException(String.format("account %s is not available", iban));
         }
     }
 
     @Override
-    public Account topUp(String id, BigDecimal amount) {
-        Account account = getById(id);
+    public Account topUp(String iban, BigDecimal amount) {
+        Account account = getByIban(iban);
 
         if (account.isStatus()) {
-            account.setBalance(account.getBalance().add(amount));
+            account.setBalance(account.getBalance()
+                    .add(amount.setScale(2, RoundingMode.HALF_EVEN)));
+            account.setUpdatedAt(LocalDateTime.now());
 
             return repository.save(account);
         } else {
-            throw new EntityNotAvailableException(String.format("account %s is not available", id));
+            throw new EntityNotAvailableException(String.format("account %s is not available", iban));
         }
+    }
+
+    @Override
+    public Account getByIban(String iban) {
+        return repository.findByIban(iban).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Account with iban %s", iban)));
     }
 }

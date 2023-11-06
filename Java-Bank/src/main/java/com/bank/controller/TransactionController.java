@@ -4,6 +4,7 @@ import com.bank.converter.EntityConverter;
 import com.bank.domain.dto.TransactionDto;
 import com.bank.domain.entity.Transaction;
 import com.bank.service.TransactionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,17 +14,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("transactions")
+@RequiredArgsConstructor
 public class TransactionController {
 
     private final TransactionService service;
 
     private final EntityConverter<Transaction, TransactionDto> converter;
-
-    public TransactionController(TransactionService service,
-                                 EntityConverter<Transaction, TransactionDto> converter) {
-        this.service = service;
-        this.converter = converter;
-    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -34,7 +30,7 @@ public class TransactionController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TransactionDto getById(@PathVariable("id") long id) {
+    public TransactionDto getById(@PathVariable("id") Long id) {
         return converter.toDto(service.getById(id));
     }
 
@@ -44,11 +40,12 @@ public class TransactionController {
         service.delete(id);
     }
 
-    @PostMapping("/transfer/{creditAccId}/{debitAccId}/{amount}")
+    @PostMapping("/transfer/{creditAccIban}/{debitAccIban}")
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionDto transfer(@PathVariable("creditAccId") String creditAccId,
-                                   @PathVariable("debitAccId") String debitAccId,
-                                   @PathVariable("amount")BigDecimal amount) {
-        return converter.toDto(service.transfer(creditAccId, debitAccId, amount));
+    public Long transfer(@PathVariable("creditAccIban") String creditAccIban,
+                         @PathVariable("debitAccIban") String debitAccIban,
+                         @RequestParam BigDecimal amount,
+                         @RequestParam(defaultValue = "Private") String description) {
+        return service.transfer(creditAccIban, debitAccIban, amount, description).getId();
     }
 }

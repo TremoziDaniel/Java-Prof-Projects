@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /*  Java Banking Application
 *
 *   @author Danil Izmajlov
-*   @version 0.7
+*   @version 0.8
 *   08.09.2023
 *       Tel-Ran
 * */
