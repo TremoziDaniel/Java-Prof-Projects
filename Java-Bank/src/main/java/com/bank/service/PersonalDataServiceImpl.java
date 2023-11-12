@@ -4,6 +4,7 @@ import com.bank.domain.entity.PersonalData;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.PersonalDataRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import java.util.List;
 public class PersonalDataServiceImpl implements PersonalDataService {
 
     private final PersonalDataRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<PersonalData> getAll() {
@@ -33,6 +35,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public PersonalData create(@Valid PersonalData personalData) {
+        personalData.setPassword(passwordEncoder.encode(personalData.getPassword()));
+
         return repository.save(personalData);
     }
 
@@ -40,6 +44,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     public PersonalData update(Long id, @Valid PersonalData personalData) {
         PersonalData oldPersonalData = getById(id);
         personalData.setId(oldPersonalData.getId());
+        personalData.setPassword(passwordEncoder.encode(personalData.getPassword()));
 
         return repository.save(personalData);
     }

@@ -64,9 +64,9 @@ public class TransactionServiceImpl implements TransactionService {
         debitAcc.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(new Transaction(creditAcc, debitAcc, TransactionType.PERSONAL,
-                creditAcc.getCurrency(), amount, String.format("%s transaction on %s %s from iban %s to iban %s.",
+                creditAcc.getCurrency(), amount, String.format("%s transaction on %s %s from %s to %s.",
                 description.isEmpty() ? "Private" : description, amount, creditAcc.getCurrency().getCurrencyAbb(),
-                creditAccIban, debitAccIban),
+                creditAcc.getName(), debitAcc.getName()),
                 LocalDateTime.now()));
     }
 

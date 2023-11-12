@@ -12,13 +12,14 @@ public class AccountConverter implements EntityConverter<Account, AccountDto> {
     @Override
     public AccountDto toDto(Account account) {
         return new AccountDto(account.getId(), account.getIban(), account.getClient().getId().toString(),
-                account.getName(), account.isStatus(), account.getCurrency().getCurrencyAbb(),
+                account.getName(), account.getType(), account.isStatus(), account.getCurrency().getCurrencyAbb(),
                 account.getBalance(), account.getCreatedAt(), account.getUpdatedAt());
     }
 
     @Override
     public Account toEntity(AccountDto accountDto) {
-        return new Account(accountDto.getId(), accountDto.getIban(), null, accountDto.getName(),
-                accountDto.isStatus(), null, accountDto.getCreatedAt(), accountDto.getUpdatedAt());
+        return new Account(accountDto.getId(), accountDto.getIban(), null,
+                accountDto.getName(), accountDto.getType(), accountDto.isStatus(),
+                null, accountDto.getCreatedAt(), accountDto.getUpdatedAt());
     }
 }

@@ -1,5 +1,6 @@
 package com.bank.domain.dto;
 
+import com.bank.domain.enums.AccountType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -22,6 +23,8 @@ public class AccountDto {
     private String clientId;
 
     private String name;
+
+    private AccountType type;
 
     private boolean status;
 

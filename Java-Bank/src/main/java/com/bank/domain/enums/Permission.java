@@ -12,6 +12,4 @@ public enum Permission {
     PERMISSION_CLIENT("Client");
 
     private final String permission;
-
-
 }

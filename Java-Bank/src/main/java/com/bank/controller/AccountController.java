@@ -6,8 +6,8 @@ import com.bank.domain.dto.TransactionDto;
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Transaction;
 import com.bank.service.AccountService;
-import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,7 +63,7 @@ public class AccountController {
     public Pair<String, BigDecimal> getBalance(@PathVariable("iban") String iban) {
         Account account = service.getByIban(iban);
 
-        return new Pair<>(account.getCurrency().getCurrencyAbb(), account.getBalance());
+        return Pair.of(account.getCurrency().getCurrencyAbb(), account.getBalance());
     }
 
     @GetMapping("/{iban}/transactions")

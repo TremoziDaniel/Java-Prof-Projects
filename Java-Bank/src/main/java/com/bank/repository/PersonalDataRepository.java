@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PersonalDataRepository extends JpaRepository<PersonalData, Long> {
-    // TODO find methods
+
+    PersonalData findByEmail(String email);
 }

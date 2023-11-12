@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -75,7 +74,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client changeStatus(String id) {
         Client client = getById(id);
-        client.getAccounts().stream().peek(acc -> acc.setStatus(!client.isStatus())).collect(Collectors.toList());
+        client.setAccounts(client.getAccounts().stream().peek(acc -> acc.setStatus(!client.isStatus())).collect(Collectors.toList()));
         client.setStatus(!client.isStatus());
         client.setUpdatedAt(LocalDateTime.now());
 
@@ -84,7 +83,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client getByTaxCode(String taxCode) {
-        return Optional.of(repository.findByTaxCode(taxCode)).orElseThrow(() ->
+        return repository.findByTaxCode(taxCode).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Client with tax code %s.", taxCode)));
     }
 }

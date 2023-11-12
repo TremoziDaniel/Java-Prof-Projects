@@ -4,7 +4,6 @@ import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.domain.exception.NotEnoughFundsException;
 import com.bank.domain.exception.TooManyAccountsException;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,7 +44,7 @@ public class EntityHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity ValueException(ValueException exception) {
+    public ResponseEntity IllegalArgumentException(IllegalArgumentException exception) {
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

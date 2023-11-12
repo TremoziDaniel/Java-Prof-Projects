@@ -1,5 +1,6 @@
 package com.bank.domain.entity;
 
+import com.bank.domain.enums.AccountType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,8 +22,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class Account {
-    // @Basic
-    // @NotBlank, @JsonFormat, @JsonIgnore(@JsonBackReference, @JsonManagedReference)
+    // @JsonFormat, @JsonIgnore(@JsonBackReference, @JsonManagedReference)
     @Id
     private UUID id;
 
@@ -37,6 +37,9 @@ public class Account {
     @Size(message = "Account name length must be between 3 and 255 characters.",
             min = 3, max = 255)
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    private AccountType type;
 
     @Basic
     private boolean status;
@@ -53,11 +56,13 @@ public class Account {
     @OneToMany(mappedBy = "debitAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Transaction> transactionsDebit = new ArrayList<>();
 
+    // TODO JoinColumns for general transactions
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    public Account(UUID id, String iban, Client client, String name, boolean status,
+    public Account(UUID id, String iban, Client client, String name, AccountType type, boolean status,
                    Currency currency, LocalDateTime createdAt, LocalDateTime updatedAt) {
         if (id == null) {
             this.id = UUID.randomUUID();
@@ -67,6 +72,7 @@ public class Account {
         this.iban = iban;
         this.client = client;
         this.name = name;
+        this.type = type;
         this.status = status;
         this.currency = currency;
         this.createdAt = createdAt;

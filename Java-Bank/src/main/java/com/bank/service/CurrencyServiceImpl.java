@@ -3,7 +3,6 @@ package com.bank.service;
 import com.bank.domain.entity.Currency;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.CurrencyRepository;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +66,7 @@ public class CurrencyServiceImpl implements CurrencyService{
                 .multiply(currencyConverted.getRate()).setScale(2, RoundingMode.HALF_EVEN);
 
         if (convertedAmount.compareTo(BigDecimal.ZERO) == 0) {
-            throw new ValueException(String.format("Converted %s %s is lover than 0.01 %s.",
+            throw new IllegalArgumentException(String.format("Converted %s %s is lover than 0.01 %s.",
                     amount, currencyOriginal.getCurrencyAbb(), currencyConverted.getCurrencyAbb()));
         }
 
@@ -76,7 +75,7 @@ public class CurrencyServiceImpl implements CurrencyService{
 
     @Override
     public Currency getByAbb(String abb) {
-        return Optional.of(repository.findByCurrencyAbb(abb)).orElseThrow(() ->
+        return repository.findByCurrencyAbb(abb).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Currency with abb %s.", abb)));
     }
 }
