@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
-    @Query(value = "SELECT m FROM Manager m WHERE m.personalData.email = ?1")
-    Manager findByEmail(String email);
+    Manager findByManager_PersonalData_Email(String email);
 }

@@ -14,23 +14,24 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final ClientRepository clientRepository;
 
     private final ManagerRepository managerRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Client client = clientRepository.findByEmail(email);
-
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Client client = clientRepository.findByClient_PersonalData_Email(username);
+        System.out.println(client);
+        System.out.println(client == null);
         if (client == null) {
-            Manager manager = managerRepository.findByEmail(email);
+            Manager manager = managerRepository.findByManager_PersonalData_Email(username);
 
-            if (UserAuthenticationDao.getAdminPassword().equals(email)) {
+            if (UserAuthenticationDao.getAdminPassword().equals(username)) {
                 return UserAuthenticationDao.admin();
-            } if (manager == null) {
-                throw new EntityNotFoundException(String.format("No user with email: %s", email));
+            } else if (manager == null) {
+                throw new EntityNotFoundException(String.format("No user with email: %s", username));
             }
 
             return UserAuthenticationDao.fromManager(manager);
