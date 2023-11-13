@@ -2,6 +2,7 @@ package com.bank.repository;
 
 import com.bank.domain.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -12,5 +13,6 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     Optional<Client> findByTaxCode(String taxCode);
 
-    Client findByClient_PersonalData_Email(String email);
+    @Query(value = "SELECT c FROM Client c WHERE c.personalData.email = ?1")
+    Client findByEmail(String email);
 }

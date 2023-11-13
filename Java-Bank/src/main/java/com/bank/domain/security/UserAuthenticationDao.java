@@ -16,7 +16,7 @@ public class UserAuthenticationDao extends UserAuthentication {
     private static final String adminEmail = "admin@admin.com";
 
     @Getter
-    private static final String adminPassword = "$2a$10$xCHBkLiRbeICpU/ZMsHbseboIEr5spz1QliE/8I3gGLkJgCEze0Oq";
+    private static final String adminPassword = "$2a$10$LTBTqnvh.IsO8OYVticWXOUuPv12lw/dta79GGdX1zwdUW5drBULu";
 
     public UserAuthenticationDao(String email, String password, List<SimpleGrantedAuthority> authorities, boolean status, boolean accountStatus) {
         super(email, password, authorities, status, accountStatus);

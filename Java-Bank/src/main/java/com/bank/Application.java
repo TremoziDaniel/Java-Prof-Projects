@@ -2,6 +2,9 @@ package com.bank;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.Arrays;
+
 /*  Java Banking Application
 *
 *   @author Danil Izmajlov

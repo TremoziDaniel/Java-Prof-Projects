@@ -15,6 +15,7 @@ import java.util.List;
 public class PersonalDataServiceImpl implements PersonalDataService {
 
     private final PersonalDataRepository repository;
+
     private final PasswordEncoder passwordEncoder;
 
     @Override

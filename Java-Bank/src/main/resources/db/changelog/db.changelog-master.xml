@@ -253,24 +253,24 @@
             INSERT INTO personal_data VALUES(9223372036854775807, 'Admin', 'Admined', 'Internet',
                                              'Server', 'Admin St.', '404/A', '0',
                                              '+(000)-404-404-1234', 'admin@admin.com',
-                                             '$2a$10$xCHBkLiRbeICpU/ZMsHbseboIEr5spz1QliE/8I3gGLkJgCEze0Oq');
+                                             '$2a$10$LTBTqnvh.IsO8OYVticWXOUuPv12lw/dta79GGdX1zwdUW5drBULu');
             INSERT INTO personal_data (id, first_name, last_name, country, city, street, house_number,
                                        phone_number, email, password)
                                             VALUES(1, 'Krok', 'Raymond', 'United States od America',
                                                    'Oak Park', 'Linden Ave', '318', '+1 202-506-4379',
                                                    'mcdonalds19xx@ceo.com',
-                                                   '$2a$10$SzOcV9QS57O14Wyq2il/deSA.DJK2aNtx05pskTvzzY0Yv9QwbNdG');
+                                                   '$2a$10$nQpM1U5eXL2qiXiytIiHqO1YZ7AbX.fSFwV1JBgiInS7PR0W.yq.6');
             INSERT INTo personal_data (id, first_name, last_name, country, city, street, phone_number,
                                        email, password)
                                             VALUES(2, 'Jose', 'Bove', 'France', 'Talence',
                                                    'Rue du Professeur Arnozan', '+33 5 56 84 78 33',
                                                    'talencelamairie@gov.fr',
-                                                   '$2a$10$LomALMjCsSAsdETakRQb7uP2B4DnVZZXoEAFeq/LNwXEWhP6s.IdG');
+                                                   '$2a$10$JUiQohf81iPTesgRVVibYeONV4599QsCG4A0ARTJRvPpHPpRTx6DK');
             INSERT INTO personal_data (id, first_name, last_name, country, city, street, house_number,
                                        phone_number, email, password)
                                             VALUES (3, 'Mitsui', 'Toyota', 'Japan', 'Kyoto', 'Iwagamicho',
                                                     '724', '+81 75-841-7141', 'loveToyota@post.jp',
-                                                    '$2a$10$ELysH3os7JouYMWyPXUrEuoWuBSvf8hL4ofLYxazIJ9HYNcJgOk1G');
+                                                    '$2a$10$jrOxB/bED90iPHuqpTGVrOcUPHlzYx9gJONTJHtlBiM/gRPB2oYvu');
         </sql>
         <comment>Admin!2023</comment>
         <comment>Bigmac$5*15</comment>
