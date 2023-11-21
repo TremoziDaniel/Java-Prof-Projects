@@ -2,11 +2,9 @@ package com.bank.converter;
 
 import com.bank.domain.dto.AgreementDto;
 import com.bank.domain.entity.Agreement;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class AgreementConverter implements EntityConverter<Agreement, AgreementDto>{
 
     @Override

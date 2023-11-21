@@ -19,7 +19,7 @@ public class Manager {
     @Basic
     private boolean status;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "personal_data_id", referencedColumnName = "id")
     private PersonalData personalData;
 

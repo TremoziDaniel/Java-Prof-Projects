@@ -10,10 +10,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -22,12 +19,12 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class Account {
-    // @JsonFormat, @JsonIgnore(@JsonBackReference, @JsonManagedReference)
+
     @Id
     private UUID id;
 
-    @Pattern(message = "Invalid iban.\nExample: BI12A1B212345671234567812345678 or BI12A1B21234567",
-            regexp = "^[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([0-9]?){0,16}$")
+    @Pattern(message = "Invalid iban.\nExample: BI 12 A1B2 1234567 1234567812345678 or BI-12-A1B2-1234567",
+            regexp = "^[A-Z]{2}[-\\s.]?[0-9]{2}[-\\s.]?[A-Z0-9]{4}[-\\s.]?[0-9]{7}[-\\s.]?([0-9]?){0,16}$")
     private String iban;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
@@ -49,14 +46,12 @@ public class Account {
     private Currency currency;
 
     private BigDecimal balance;
-
+    // TODO JoinColumns for general transactions
     @OneToMany(mappedBy = "creditAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Transaction> transactionsCredit = new ArrayList<>();
 
     @OneToMany(mappedBy = "debitAccount", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Transaction> transactionsDebit = new ArrayList<>();
-
-    // TODO JoinColumns for general transactions
 
     private LocalDateTime createdAt;
 
@@ -64,11 +59,7 @@ public class Account {
 
     public Account(UUID id, String iban, Client client, String name, AccountType type, boolean status,
                    Currency currency, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        if (id == null) {
-            this.id = UUID.randomUUID();
-        } else {
-            this.id = id;
-        }
+        this.id = Objects.requireNonNullElseGet(id, UUID::randomUUID);
         this.iban = iban;
         this.client = client;
         this.name = name;

@@ -17,4 +17,6 @@ public interface ManagerService {
     void delete(Long id);
 
     Manager changeStatus(Long id);
+
+    Manager getCurrent();
 }

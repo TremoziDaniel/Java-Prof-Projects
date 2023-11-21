@@ -3,7 +3,9 @@ package com.bank.service;
 import com.bank.domain.entity.Manager;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.ManagerRepository;
+import com.bank.repository.PersonalDataRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,7 +17,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     private final ManagerRepository repository;
 
-    private final PersonalDataService personalDataService;
+    private final PersonalDataRepository personalDataRepository;
 
     @Override
     public List<Manager> getAll() {
@@ -35,7 +37,8 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Manager create(Long personalDataId, Manager manager) {
-        manager.setPersonalData(personalDataService.getById(personalDataId));
+        manager.setPersonalData(personalDataRepository.findById(personalDataId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Personal Data %d.", personalDataId))));
         manager.setCreatedAt(LocalDateTime.now());
 
         return repository.save(manager);
@@ -46,6 +49,7 @@ public class ManagerServiceImpl implements ManagerService {
         Manager oldManager = getById(id);
         manager.setId(id);
         manager.setPersonalData(oldManager.getPersonalData());
+        manager.setCreatedAt(oldManager.getCreatedAt());
         manager.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(manager);
@@ -59,9 +63,34 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public Manager changeStatus(Long id) {
         Manager manager = getById(id);
+        validateManager(id);
         manager.setStatus(!manager.isStatus());
         manager.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(manager);
+    }
+
+    @Override
+    public Manager getCurrent() {
+        Manager manager = repository.findByEmail(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if (manager == null) {
+            throw new EntityNotFoundException("No assigned manager.");
+        }
+
+        return null;
+    }
+
+    private void validateManager(Long id) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Manager"))) {
+            Manager managerCurrent = getCurrent();
+
+            if (id.equals(managerCurrent.getId())) {
+                throw new EntityNotFoundException(String.format(
+                        "Unmatched id. Your manager id is %d.", managerCurrent.getId()));
+            }
+        }
     }
 }

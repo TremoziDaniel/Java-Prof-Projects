@@ -28,7 +28,8 @@ public class PersonalData {
 
     private String houseNumber;
 
-    private Integer apartmentNumber;
+    @Basic
+    private int apartmentNumber;
 
     @Pattern(message = "Invalid phone number.\nExample: +(999)-999-999-99-99",
             regexp = "^\\+?[(]?[0-9]{1,3}[)]?[-\\s.]?[0-9]{1,2}[-\\s.]?[0-9][-\\s.]?[0-9][-\\s.]?[0-9]{2}[-\\s.]?[0-9]{2}[-\\s.]?[0-9]{2}$")

@@ -23,12 +23,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Client client = clientRepository.findByEmail(username);
-
+        System.out.println(client);
         if (client == null) {
             Manager manager = managerRepository.findByEmail(username);
 
-            if (UserAuthenticationDao.getAdminPassword().equals(username)) {
-
+            if (UserAuthenticationDao.getAdminEmail().equals(username)) {
                 return UserAuthenticationDao.admin();
             } else if (manager == null) {
                 throw new EntityNotFoundException(String.format("No user with email: %s", username));

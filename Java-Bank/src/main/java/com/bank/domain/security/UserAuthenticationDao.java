@@ -13,9 +13,9 @@ import java.util.List;
 
 public class UserAuthenticationDao extends UserAuthentication {
 
+    @Getter
     private static final String adminEmail = "admin@admin.com";
 
-    @Getter
     private static final String adminPassword = "$2a$10$LTBTqnvh.IsO8OYVticWXOUuPv12lw/dta79GGdX1zwdUW5drBULu";
 
     public UserAuthenticationDao(String email, String password, List<SimpleGrantedAuthority> authorities, boolean status, boolean accountStatus) {
@@ -39,6 +39,6 @@ public class UserAuthenticationDao extends UserAuthentication {
 
     public static UserDetails admin() {
         return new User(adminEmail, adminPassword,
-                Role.MANAGER.getGrantedAuthorities());
+                Role.ADMIN.getGrantedAuthorities());
     }
 }

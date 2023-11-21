@@ -2,15 +2,10 @@ package com.bank.converter;
 
 import com.bank.domain.dto.ProductDto;
 import com.bank.domain.entity.Product;
-import com.bank.service.CurrencyService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class ProductConverter implements EntityConverter<Product, ProductDto>{
-
-    private final CurrencyService currencyService;
 
     @Override
     public ProductDto toDto(Product product) {

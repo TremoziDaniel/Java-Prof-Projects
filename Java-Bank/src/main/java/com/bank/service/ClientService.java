@@ -1,5 +1,6 @@
 package com.bank.service;
 
+import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
 
 import java.util.List;
@@ -18,5 +19,9 @@ public interface ClientService {
 
     Client changeStatus(String id);
 
+    List<Account> getAccounts(String id);
+
     Client getByTaxCode(String taxCode);
+
+    Client getCurrent();
 }

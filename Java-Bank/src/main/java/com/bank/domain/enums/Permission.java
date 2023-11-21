@@ -7,9 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Permission {
 
-    PERMISSION_ADMIN("Admin"),
-    PERMISSION_MANAGER("Manager"),
-    PERMISSION_CLIENT("Client");
+    PERMISSION_ADMIN("admin"),
+    PERMISSION_MANAGER("manager"),
+    PERMISSION_CLIENT("client");
 
     private final String permission;
 }

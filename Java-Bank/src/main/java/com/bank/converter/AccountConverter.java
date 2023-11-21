@@ -2,11 +2,9 @@ package com.bank.converter;
 
 import com.bank.domain.dto.AccountDto;
 import com.bank.domain.entity.Account;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class AccountConverter implements EntityConverter<Account, AccountDto> {
 
     @Override

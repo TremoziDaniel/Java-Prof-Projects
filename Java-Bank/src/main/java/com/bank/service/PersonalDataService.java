@@ -15,4 +15,8 @@ public interface PersonalDataService {
     PersonalData update(Long id, PersonalData personalData);
 
     void delete(Long id);
+
+    List<String> getProtectedData(Long id);
+
+    PersonalData getCurrentPersonalData();
 }

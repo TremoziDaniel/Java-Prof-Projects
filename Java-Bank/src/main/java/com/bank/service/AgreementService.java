@@ -15,4 +15,6 @@ public interface AgreementService {
     Agreement update(Long id, Agreement agreement);
 
     void delete(Long id);
+
+    Agreement changeStatus(Long id);
 }

@@ -1,0 +1,174 @@
+package com.bank.service;
+
+import com.bank.domain.entity.Account;
+import com.bank.domain.entity.Client;
+import com.bank.domain.entity.Currency;
+import com.bank.domain.entity.Transaction;
+import com.bank.domain.exception.EntityNotAvailableException;
+import com.bank.domain.exception.EntityNotFoundException;
+import com.bank.domain.exception.TooManyAccountsException;
+import com.bank.repository.AccountRepository;
+import com.bank.repository.ClientRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class AccountServiceImpl implements AccountService {
+
+    private final AccountRepository repository;
+
+    private final ClientRepository clientRepository;
+
+    private final CurrencyService currencyService;
+
+    @Override
+    public List<Account> getAll() {
+        List<Account> accounts = repository.findAll();
+
+        if (accounts.isEmpty()) {
+            throw new EntityNotFoundException("Accounts.");
+        }
+
+        return accounts;
+    }
+
+    @Override
+    public Account getById(String id) {
+        return repository.findById(UUID.fromString(id)).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Account %s.", id)));
+    }
+
+    @Override
+    public Account create(String clientId, String currencyAbb, @Valid Account account) {
+        Client client = clientRepository.findById(UUID.fromString(clientId)).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Client %s.", clientId)));
+        Currency currency = currencyService.getByAbb(currencyAbb);
+        validateAccountAmount(client);
+        account.setClient(client);
+        account.setCurrency(currency);
+        account.setBalance(new BigDecimal(0));
+        account.setCreatedAt(LocalDateTime.now());
+
+        return repository.save(account);
+    }
+
+    @Override
+    public Account update(String iban, @Valid Account account) {
+        Account oldAccount = getById(iban);
+        account.setId(oldAccount.getId());
+        account.setClient(oldAccount.getClient());
+        account.setBalance(oldAccount.getBalance());
+        account.setCreatedAt(oldAccount.getCreatedAt());
+        account.setUpdatedAt(LocalDateTime.now());
+
+        return repository.save(account);
+    }
+
+    @Override
+    public void delete(String id) {
+        Account account = getById(id);
+        repository.delete(account);
+    }
+
+    @Override
+    public List<Transaction> getTransactions(String iban) {
+        Account account = getByIban(iban);
+        validateClient(iban);
+
+        return account.compactTransactions();
+    }
+
+    @Override
+    public Account changeStatus(String iban) {
+        Account account = getByIban(iban);
+        validateClient(iban);
+        account.setStatus(!account.isStatus());
+        account.setUpdatedAt(LocalDateTime.now());
+
+        return repository.save(account);
+    }
+
+    @Override
+    public Account changeCurrency(String iban, String currencyAbb) {
+        Account account = getByIban(iban);
+        validateClient(iban);
+        validateStatus(account);
+        Currency currency = currencyService.getByAbb(currencyAbb);
+        account.setBalance(currencyService.convertCurrency(
+                account.getCurrency(), currency, account.getBalance()));
+        account.setCurrency(currency);
+        account.setUpdatedAt(LocalDateTime.now());
+
+        return repository.save(account);
+    }
+
+    @Override
+    public Account topUp(String iban, BigDecimal amount) {
+        Account account = getByIban(iban);
+        validateStatus(account);
+        account.setBalance(account.getBalance()
+                .add(amount.setScale(2, RoundingMode.HALF_EVEN)));
+        account.setUpdatedAt(LocalDateTime.now());
+
+        return repository.save(account);
+    }
+
+    @Override
+    public Account getByIban(String iban) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            if (clientRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                    .getAccounts().stream().noneMatch(acc -> acc.getIban().equals(iban))) {
+                throw new EntityNotFoundException(String.format("Account with iban %s on your client.", iban));
+            }
+        }
+
+        return repository.findByIban(iban).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Account with iban %s.", iban)));
+    }
+
+    private void validateClient(String iban) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = clientRepository.findByEmail(
+                    SecurityContextHolder.getContext().getAuthentication().getName());
+
+            if (clientCurrent.getAccounts().stream().noneMatch(acc -> acc.getIban().equals(iban))) {
+                throw new EntityNotFoundException(String.format("Account with iban %s on your client.", iban));
+            }
+        }
+    }
+
+    private void validateStatus(Account account) {
+        if (!account.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Account %s is not available.", account.getIban()));
+        }
+    }
+
+    private void validateAccountAmount(Client client) {
+        if (client.getAccounts().size() > 4 && SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = clientRepository.findByEmail(
+                    SecurityContextHolder.getContext().getAuthentication().getName());
+
+            if (!client.getId().equals(clientCurrent.getId())) {
+                throw new EntityNotFoundException(
+                        String.format("Client id %s that you put into request don't match with yours client id.", client.getId()));
+            }
+
+            throw new TooManyAccountsException(
+                    "You opened too many accounts(4)! If you need more accounts than ask your manager to open you a new one.");
+        } if (client.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Client %s isn't active.", client.getId()));
+        }
+    }
+}

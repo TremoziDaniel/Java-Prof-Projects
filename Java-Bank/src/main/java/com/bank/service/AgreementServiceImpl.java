@@ -6,7 +6,10 @@ import com.bank.domain.entity.Currency;
 import com.bank.domain.entity.Product;
 import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.EntityNotFoundException;
+import com.bank.repository.AccountRepository;
 import com.bank.repository.AgreementRepository;
+import com.bank.repository.CurrencyRepository;
+import com.bank.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +22,11 @@ public class AgreementServiceImpl implements AgreementService {
 
     private final AgreementRepository repository;
 
-    private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
-    private final ProductService productService;
+    private final ProductRepository productRepository;
 
-    private final CurrencyService currencyService;
+    private final CurrencyRepository currencyRepository;
 
     @Override
     public List<Agreement> getAll() {
@@ -43,16 +46,13 @@ public class AgreementServiceImpl implements AgreementService {
 
     @Override
     public Agreement create(String accountIban, Long productId, String currencyAbb, Agreement agreement) {
-        Account account = accountService.getByIban(accountIban);
-        Product product = productService.getById(productId);
-        Currency currency = currencyService.getByAbb(currencyAbb);
-
-        if (!account.isStatus()) {
-            throw new EntityNotAvailableException(String.format("Account %s is not available.", accountIban));
-        } if (!product.isStatus()) {
-            throw new EntityNotAvailableException(String.format("Product %d is not available.", productId));
-        }
-
+        Account account = accountRepository.findByIban(accountIban).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Account with iban %s.", accountIban)));
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Product %d.", productId)));
+        Currency currency = currencyRepository.findByCurrencyAbb(currencyAbb).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Currency with abb %s.", currencyAbb)));
+        validateStatus(account, product);
         agreement.setAccount(account);
         agreement.setProduct(product);
         agreement.setCurrency(currency);
@@ -67,6 +67,7 @@ public class AgreementServiceImpl implements AgreementService {
         agreement.setId(id);
         agreement.setAccount(oldAgreement.getAccount());
         agreement.setProduct(oldAgreement.getProduct());
+        agreement.setCreatedAt(oldAgreement.getCreatedAt());
         agreement.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(agreement);
@@ -76,5 +77,22 @@ public class AgreementServiceImpl implements AgreementService {
     public void delete(Long id) {
         Agreement agreement = getById(id);
         repository.delete(agreement);
+    }
+
+    @Override
+    public Agreement changeStatus(Long id) {
+        Agreement agreement = getById(id);
+        agreement.setStatus(!agreement.isStatus());
+        agreement.setUpdatedAt(LocalDateTime.now());
+
+        return repository.save(agreement);
+    }
+
+    private void validateStatus(Account account, Product product) {
+        if (!account.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Account %s is not available.", account.getIban()));
+        } if (!product.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Product %d is not available.", product.getId()));
+        }
     }
 }

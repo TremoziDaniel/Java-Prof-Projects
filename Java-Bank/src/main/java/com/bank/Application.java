@@ -8,7 +8,7 @@ import java.util.Arrays;
 /*  Java Banking Application
 *
 *   @author Danil Izmajlov
-*   @version 0.8
+*   @version 1.0.0
 *   08.09.2023
 *       Tel-Ran
 * */
