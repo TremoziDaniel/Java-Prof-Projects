@@ -5,6 +5,7 @@ import com.bank.domain.dto.AccountDto;
 import com.bank.domain.dto.ClientDto;
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
+import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.service.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -80,7 +82,7 @@ public class ClientController {
     @PreAuthorize("hasAnyAuthority('manager', 'admin')")
     public String update(@PathVariable("id") @Parameter(description = "Client id") String id,
                          @RequestBody(description = "Client body") ClientDto client) {
-        return service.update(id, converter.toEntity(client)).getId().toString();
+        return service.update(id, converter.toEntity(client), client.getManagerId()).getId().toString();
     }
 
     @Operation(summary = "Delete client",
@@ -93,6 +95,18 @@ public class ClientController {
         service.delete(id);
     }
 
+    @Operation(summary = "Change status of client",
+            description = "Changes status to in client opposite by a defined id.")
+    @SecurityRequirement(name = "basicAuth")
+    @PatchMapping("/changeStatus/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('client', 'admin')")
+    public String changeStatus(@PathVariable("id") @Parameter(description = "Client id") String id) {
+        validateClient(id);
+
+        return service.changeStatus(id).getId().toString();
+    }
+
     @Operation(summary = "Get all accounts from client",
             description = "Returns list of all account from client by a defined id.")
     @SecurityRequirement(name = "basicAuth")
@@ -101,18 +115,10 @@ public class ClientController {
     @PreAuthorize("hasAnyAuthority('client', 'admin')")
     public List<AccountDto> getAccounts(@PathVariable("id")
                                         @Parameter(description = "Client id") String id) {
+        validateClient(id);
+
         return service.getAccounts(id).stream().map(
                 accountConverter::toDto).collect(Collectors.toList());
-    }
-
-    @Operation(summary = "Change status of client",
-            description = "Changes status to in client opposite by a defined id.")
-    @SecurityRequirement(name = "basicAuth")
-    @PatchMapping("/changeStatus/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyAuthority('client', 'admin')")
-    public String changeStatus(@PathVariable("id") @Parameter(description = "Client id") String id) {
-        return service.changeStatus(id).getId().toString();
     }
 
     @Operation(summary = "Get client by tax code",
@@ -123,6 +129,8 @@ public class ClientController {
     @PreAuthorize("hasAnyAuthority('client', 'manager', 'admin')")
     public ClientDto getByTaxCode(@PathVariable("taxCode")
                                   @Parameter(description = "Client tax code") String taxCode) {
+        validateClientByTaxCode(taxCode);
+
         return converter.toDto(service.getByTaxCode(taxCode));
     }
 
@@ -134,5 +142,28 @@ public class ClientController {
     @PreAuthorize("hasAnyAuthority('client', 'admin')")
     public ClientDto getCurrent() {
         return converter.toDto(service.getCurrent());
+    }
+
+    private void validateClient(String id) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = service.getCurrent();
+
+            if (id.equals(clientCurrent.getId().toString())) {
+                throw new EntityNotFoundException(String.format("Unmatched id. Your client id is %s.", clientCurrent.getId()));
+            }
+        }
+    }
+
+    private void validateClientByTaxCode(String taxCode) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = service.getCurrent();
+
+            if (taxCode.equals(clientCurrent.getTaxCode())) {
+                throw new EntityNotFoundException(String.format(
+                        "Unmatched tax code. Your client tax code is %s.", clientCurrent.getTaxCode()));
+            }
+        }
     }
 }

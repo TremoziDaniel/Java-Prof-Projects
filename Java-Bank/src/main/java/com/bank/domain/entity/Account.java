@@ -66,6 +66,7 @@ public class Account {
         this.type = type;
         this.status = status;
         this.currency = currency;
+        this.balance = new BigDecimal(0);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

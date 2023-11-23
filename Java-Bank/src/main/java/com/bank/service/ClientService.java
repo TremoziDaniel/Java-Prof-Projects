@@ -13,7 +13,7 @@ public interface ClientService {
 
     Client create(Long managerId, Long personalDataId, Client client);
 
-    Client update(String id, Client client);
+    Client update(String id, Client client, Long managerId);
 
     void delete(String id);
 

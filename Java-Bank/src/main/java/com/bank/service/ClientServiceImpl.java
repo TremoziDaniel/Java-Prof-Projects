@@ -3,6 +3,7 @@ package com.bank.service;
 import com.bank.domain.entity.Account;
 import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Manager;
+import com.bank.domain.entity.PersonalData;
 import com.bank.domain.exception.EntityNotAvailableException;
 import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.repository.ClientRepository;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,20 +50,24 @@ public class ClientServiceImpl implements ClientService {
     public Client create(Long managerId, Long personalDataId, @Valid Client client) {
         Manager manager = managerRepository.findById(managerId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Manager %d.", managerId)));
+        PersonalData personalData = personalDataRepository.findById(personalDataId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Personal Data %d.", personalDataId)));
         validateManagerStatus(manager);
         client.setManager(manager);
-        client.setPersonalData(personalDataRepository.findById(personalDataId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Personal Data %d.", personalDataId))));
+        client.setPersonalData(personalData);
         client.setCreatedAt(LocalDateTime.now());
 
         return repository.save(client);
     }
 
     @Override
-    public Client update(String id, @Valid Client client) {
+    public Client update(String id, @Valid Client client, Long managerId) {
         Client oldClient = getById(id);
+        Manager manager = managerRepository.findById(managerId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Manager %d.", managerId)));
+        validateManagerStatus(manager);
         client.setId(UUID.fromString(id));
-        client.setManager(oldClient.getManager());
+        client.setManager(manager);
         client.setPersonalData(oldClient.getPersonalData());
         client.setCreatedAt(oldClient.getCreatedAt());
         client.setUpdatedAt(LocalDateTime.now());
@@ -75,9 +81,9 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @Transactional
     public Client changeStatus(String id) {
         Client client = getById(id);
-        validateClient(id);
         client.setAccounts(client.getAccounts().stream().peek(acc ->
                 acc.setStatus(!client.isStatus())).collect(Collectors.toList()));
         client.setStatus(!client.isStatus());
@@ -88,22 +94,11 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<Account> getAccounts(String id) {
-        validateClient(id);
-
         return getById(id).getAccounts();
     }
 
     @Override
     public Client getByTaxCode(String taxCode) {
-        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
-            Client clientCurrent = getCurrent();
-
-            if (taxCode.equals(clientCurrent.getTaxCode())) {
-                throw new EntityNotFoundException(String.format("Unmatched tax code. Your client tax code is %s.", clientCurrent.getTaxCode()));
-            }
-        }
-
         return repository.findByTaxCode(taxCode).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Client with tax code %s.", taxCode)));
     }
@@ -119,18 +114,6 @@ public class ClientServiceImpl implements ClientService {
 
         return client;
     }
-
-    private void validateClient(String id) {
-        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
-            Client clientCurrent = getCurrent();
-
-            if (id.equals(clientCurrent.getId().toString())) {
-                throw new EntityNotFoundException(String.format("Unmatched id. Your client id is %s.", clientCurrent.getId()));
-            }
-        }
-    }
-
     private void validateManagerStatus(Manager manager) {
         if (!manager.isStatus()) {
             throw new EntityNotAvailableException(String.format("Manager %s isn't active.", manager.getId()));

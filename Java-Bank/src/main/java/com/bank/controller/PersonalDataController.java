@@ -2,7 +2,12 @@ package com.bank.controller;
 
 import com.bank.converter.EntityConverter;
 import com.bank.domain.dto.PersonalDataDto;
+import com.bank.domain.entity.Client;
+import com.bank.domain.entity.Manager;
 import com.bank.domain.entity.PersonalData;
+import com.bank.domain.exception.EntityNotFoundException;
+import com.bank.service.ClientService;
+import com.bank.service.ManagerService;
 import com.bank.service.PersonalDataService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,6 +18,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +40,10 @@ public class PersonalDataController {
 
     private final PersonalDataService service;
 
+    private final ClientService clientService;
+
+    private final ManagerService managerService;
+
     private final EntityConverter<PersonalData, PersonalDataDto> converter;
 
     @Operation(summary = "Get all personal data",
@@ -52,7 +62,7 @@ public class PersonalDataController {
     @SecurityRequirement(name = "basicAuth")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyAuthority('client', 'manager', 'admin')")
+    @PreAuthorize("hasAuthority('admin')")
     public PersonalDataDto getById(@PathVariable("id")
                                    @Parameter(description = "Personal data id") Long id) {
         return converter.toDto(service.getById(id));
@@ -97,6 +107,8 @@ public class PersonalDataController {
     @PreAuthorize("hasAnyAuthority('client', 'manager', 'admin')")
     public List<String> getProtectedData(@PathVariable("id")
                                          @Parameter(description = "Personal data id") Long id) {
+        validatePersonalData(id);
+
         return service.getProtectedData(id);
     }
 
@@ -108,5 +120,25 @@ public class PersonalDataController {
     @PreAuthorize("hasAnyAuthority('client', 'manager', 'admin')")
     public PersonalDataDto getCurrentPersonalData() {
         return converter.toDto(service.getCurrentPersonalData());
+    }
+
+    private void validatePersonalData(Long id) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = clientService.getCurrent();
+
+            if (!clientCurrent.getPersonalData().getId().equals(id)) {
+                throw new EntityNotFoundException(String.format(
+                        "Unmatched id. Your personalData id is %d.", clientCurrent.getPersonalData().getId()));
+            }
+        } if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().noneMatch(auth -> auth.getAuthority().equals("Manager"))) {
+            Manager managerCurrent = managerService.getCurrent();
+
+            if (!managerCurrent.getPersonalData().getId().equals(id)) {
+                throw new EntityNotFoundException(String.format(
+                        "Unmatched id. Your personalData id is %d.", managerCurrent.getPersonalData().getId()));
+            }
+        }
     }
 }

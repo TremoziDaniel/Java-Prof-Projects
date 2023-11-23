@@ -2,7 +2,10 @@ package com.bank.controller;
 
 import com.bank.converter.EntityConverter;
 import com.bank.domain.dto.TransactionDto;
+import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Transaction;
+import com.bank.domain.exception.EntityNotFoundException;
+import com.bank.service.ClientService;
 import com.bank.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +35,8 @@ import java.util.stream.Collectors;
 public class TransactionController {
 
     private final TransactionService service;
+
+    private final ClientService clientService;
 
     private final EntityConverter<Transaction, TransactionDto> converter;
 
@@ -52,7 +58,7 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('client', 'manager', 'admin')")
     public TransactionDto getById(@PathVariable("id") @Parameter(description = "Transaction id") Long id) {
-        return converter.toDto(service.getById(id));
+        return converter.toDto(validateTransactionClient(service.getById(id)));
     }
 
     @Operation(summary = "Delete transaction",
@@ -76,7 +82,35 @@ public class TransactionController {
                          @PathVariable("debitAccIban")
                          @Parameter(description = "Debit account iban") String debitAccIban,
                          @RequestBody(description = "Transfer details body") TransactionDto transactionDto) {
+        validateAccountClient(creditAccIban);
+
         return service.transfer(creditAccIban, debitAccIban, transactionDto.getAmount(),
                 transactionDto.getDescription(), transactionDto.getType()).getId();
+    }
+
+    private Transaction validateTransactionClient(Transaction transaction) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = clientService.getCurrent();
+
+            if (!clientCurrent.getAccounts().contains(transaction.getCreditAccount()) &&
+                    !clientCurrent.getAccounts().contains(transaction.getDebitAccount())) {
+                throw new EntityNotFoundException("You didn't take part in this transaction.");
+            }
+        }
+
+        return transaction;
+    }
+
+    private void validateAccountClient(String creditAccIban) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = clientService.getCurrent();
+
+            if (clientCurrent.getAccounts().stream().noneMatch(acc -> acc.getIban().equals(creditAccIban))) {
+                throw new EntityNotFoundException(String.format(
+                        "Account with iban %s on your client.", creditAccIban));
+            }
+        }
     }
 }

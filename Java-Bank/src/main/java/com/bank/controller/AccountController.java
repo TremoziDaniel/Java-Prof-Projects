@@ -4,9 +4,12 @@ import com.bank.converter.EntityConverter;
 import com.bank.domain.dto.AccountDto;
 import com.bank.domain.dto.TransactionDto;
 import com.bank.domain.entity.Account;
+import com.bank.domain.entity.Client;
 import com.bank.domain.entity.Transaction;
-import com.bank.repository.ClientRepository;
+import com.bank.domain.exception.EntityNotFoundException;
+import com.bank.domain.exception.TooManyAccountsException;
 import com.bank.service.AccountService;
+import com.bank.service.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -15,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -40,7 +44,7 @@ public class AccountController {
 
     private final EntityConverter<Account, AccountDto> converter;
 
-    private final ClientRepository clientRepository;
+    private final ClientService clientService;
 
     private final EntityConverter<Transaction, TransactionDto> transactionConverter;
 
@@ -72,6 +76,8 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('client', 'manager', 'admin')")
     public String create(@RequestBody(description = "Account body") AccountDto account) {
+        validateAccountCreationClient(account.getClientId());
+
         return service.create(
                 account.getClientId(), account.getCurrencyAbb().toUpperCase(), converter.toEntity(account)).getIban();
     }
@@ -105,6 +111,8 @@ public class AccountController {
     @PreAuthorize("hasAnyAuthority('client', 'admin')")
     public List<TransactionDto> getTransactions(@PathVariable("iban")
                                                 @Parameter(description = "Account iban") String iban) {
+        validateAccountClient(iban);
+
         return service.getTransactions(iban).stream().map(
                 transactionConverter::toDto).collect(Collectors.toList());
     }
@@ -117,6 +125,8 @@ public class AccountController {
     @PreAuthorize("hasAnyAuthority('client', 'admin')")
     public String changeStatus(@PathVariable("iban")
                                @Parameter(description = "Account iban") String iban) {
+        validateAccountClient(iban);
+
         return service.changeStatus(iban).getIban();
     }
 
@@ -130,6 +140,8 @@ public class AccountController {
                                  @Parameter(description = "Account iban") String iban,
                                  @PathVariable("currencyAbb")
                                  @Parameter(description = "Currency abbreviation") String currencyAbb) {
+        validateAccountClient(iban);
+
         return service.changeCurrency(iban, currencyAbb.toUpperCase()).getIban();
     }
 
@@ -153,6 +165,35 @@ public class AccountController {
     @PreAuthorize("hasAnyAuthority('client', 'manager', 'admin')")
     public AccountDto getByIban(@PathVariable("iban")
                                 @Parameter(description = "Account iban") String iban) {
+        validateAccountClient(iban);
+
         return converter.toDto(service.getByIban(iban));
+    }
+
+    private void validateAccountCreationClient(String clientId) {
+        if (SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = clientService.getCurrent();
+
+            if (!clientCurrent.getId().toString().equals(clientId)) {
+                throw new EntityNotFoundException(String.format(
+                        "Client id %s that you put into request don't match with your client id.", clientId));
+            } if (clientCurrent.getAccounts().size() > 4) {
+                throw new TooManyAccountsException(
+                        "You opened too many accounts(4)! If you need more accounts than ask your manager to open you a new one.");
+            }
+        }
+    }
+
+    private void validateAccountClient(String iban) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Client"))) {
+            Client clientCurrent = clientService.getCurrent();
+
+            if (clientCurrent.getAccounts().stream().noneMatch(acc -> acc.getIban().equals(iban))) {
+                throw new EntityNotFoundException(String.format(
+                        "Account with iban %s on your client.", iban));
+            }
+        }
     }
 }

@@ -13,7 +13,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class EntityHandler {
+public class AppExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity ItemNotFoundException(EntityNotFoundException exception) {

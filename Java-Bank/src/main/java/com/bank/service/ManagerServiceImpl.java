@@ -63,7 +63,6 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public Manager changeStatus(Long id) {
         Manager manager = getById(id);
-        validateManager(id);
         manager.setStatus(!manager.isStatus());
         manager.setUpdatedAt(LocalDateTime.now());
 
@@ -80,17 +79,5 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         return null;
-    }
-
-    private void validateManager(Long id) {
-        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-                .stream().anyMatch(auth -> auth.getAuthority().equals("Manager"))) {
-            Manager managerCurrent = getCurrent();
-
-            if (id.equals(managerCurrent.getId())) {
-                throw new EntityNotFoundException(String.format(
-                        "Unmatched id. Your manager id is %d.", managerCurrent.getId()));
-            }
-        }
     }
 }

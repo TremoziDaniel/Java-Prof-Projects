@@ -3,6 +3,7 @@ package com.bank.controller;
 import com.bank.converter.EntityConverter;
 import com.bank.domain.dto.ManagerDto;
 import com.bank.domain.entity.Manager;
+import com.bank.domain.exception.EntityNotFoundException;
 import com.bank.service.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -95,6 +97,8 @@ public class ManagerController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('manager', 'admin')")
     public Long changeStatus(@PathVariable("id") @Parameter(description = "Manager id") Long id) {
+        validateManager(id);
+
         return service.changeStatus(id).getId();
     }
 
@@ -106,5 +110,17 @@ public class ManagerController {
     @PreAuthorize("hasAnyAuthority('manager', 'admin')")
     public ManagerDto getCurrent() {
         return converter.toDto(service.getCurrent());
+    }
+
+    private void validateManager(Long id) {
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream().anyMatch(auth -> auth.getAuthority().equals("Manager"))) {
+            Manager managerCurrent = service.getCurrent();
+
+            if (id.equals(managerCurrent.getId())) {
+                throw new EntityNotFoundException(String.format(
+                        "Unmatched id. Your manager id is %d.", managerCurrent.getId()));
+            }
+        }
     }
 }

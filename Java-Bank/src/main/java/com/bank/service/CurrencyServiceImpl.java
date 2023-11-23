@@ -35,6 +35,8 @@ public class CurrencyServiceImpl implements CurrencyService{
 
     @Override
     public Currency create(@Valid Currency currency) {
+        currency.setRate(currency.getRate().setScale(4, RoundingMode.HALF_EVEN));
+
         return repository.save(currency);
     }
 
@@ -42,6 +44,7 @@ public class CurrencyServiceImpl implements CurrencyService{
     public Currency update(Integer id, @Valid Currency currency) {
         Currency oldCurrency = getById(id);
         currency.setId(oldCurrency.getId());
+        currency.setRate(currency.getRate().setScale(4, RoundingMode.HALF_EVEN));
 
         return repository.save(currency);
     }
@@ -54,7 +57,7 @@ public class CurrencyServiceImpl implements CurrencyService{
     @Override
     public Currency changeRate(Integer id, BigDecimal rate) {
         Currency currency = getById(id);
-        currency.setRate(rate);
+        currency.setRate(rate.setScale(4, RoundingMode.HALF_EVEN));
 
         return currency;
     }

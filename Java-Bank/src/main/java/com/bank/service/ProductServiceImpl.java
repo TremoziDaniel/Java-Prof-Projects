@@ -47,7 +47,11 @@ public class ProductServiceImpl implements ProductService {
                 new EntityNotFoundException(String.format("Manager %d.", managerId)));
         Currency currency = currencyRepository.findByCurrencyAbb(currencyAbb).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Currency with abb %s.", currencyAbb)));
-        validateManagerStatus(manager);
+
+        if (!manager.isStatus()) {
+            throw new EntityNotAvailableException(String.format("Manager %s isn't active.", manager.getId()));
+        }
+
         product.setManager(manager);
         product.setCurrency(currency);
         product.setCreatedAt(LocalDateTime.now());
@@ -78,11 +82,5 @@ public class ProductServiceImpl implements ProductService {
         product.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(product);
-    }
-
-    private void validateManagerStatus(Manager manager) {
-        if (!manager.isStatus()) {
-            throw new EntityNotAvailableException(String.format("Manager %s isn't active.", manager.getId()));
-        }
     }
 }
