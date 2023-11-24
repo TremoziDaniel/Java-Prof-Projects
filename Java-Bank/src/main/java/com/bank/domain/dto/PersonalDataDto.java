@@ -34,7 +34,7 @@ public class PersonalDataDto {
     private String houseNumber;
 
     @Schema(description = "Apartment number", defaultValue = "9", type = "int")
-    private int apartmentNumber;
+    private Integer apartmentNumber;
 
     @Schema(description = "Phone number", defaultValue = "+(999)-999-999-99-99")
     private String phoneNumber;

@@ -149,12 +149,12 @@ public class AccountController {
     @Operation(summary = "Top up account",
             description = "Top ups account by a defined iban.")
     @SecurityRequirement(name = "basicAuth")
-    @PatchMapping("/topUp/{iban}")
+    @PatchMapping("/topUp/{iban}/{amount}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('admin')")
     public String topUp (@PathVariable("iban")
                          @Parameter(description = "Account iban") String iban,
-                         @RequestBody(description = "Top up amount") BigDecimal amount) {
+                         @PathVariable("amount") @Parameter(description = "Top up amount") BigDecimal amount) {
         return service.topUp(iban, amount).getIban();
     }
 

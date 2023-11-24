@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class AppExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity ItemNotFoundException(EntityNotFoundException exception) {
+    public ResponseEntity EntityNotFoundException(EntityNotFoundException exception) {
         return new ResponseEntity(new StringBuilder(exception.getClass().getSimpleName()).append(" ")
                 .append(exception.getMessage()),
                 HttpStatus.NOT_FOUND);
