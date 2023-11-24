@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 @RequestMapping("accounts")
 @RequiredArgsConstructor
 public class AccountController {
+    // TODO validation
     // @ComponentScan(@Import), @Configuration, @ModelAttribute
     private final AccountService service;
 

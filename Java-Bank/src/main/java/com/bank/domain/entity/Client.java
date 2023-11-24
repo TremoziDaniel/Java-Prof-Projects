@@ -39,7 +39,7 @@ public class Client {
     private PersonalData personalData;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Account> accounts = new ArrayList<>();
+    private List<Account>   accounts = new ArrayList<>();
 
     private LocalDateTime createdAt;
 

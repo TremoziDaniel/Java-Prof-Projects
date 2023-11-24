@@ -39,7 +39,6 @@ public class CurrencyController {
 
     @Operation(summary = "Get all currencies",
             description = "Returns list of all currencies.")
-    @SecurityRequirement(name = "basicAuth")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<CurrencyDto> getAll() {
@@ -49,7 +48,6 @@ public class CurrencyController {
 
     @Operation(summary = "Get currency by id.",
             description = "Returns currency by a defined id.")
-    @SecurityRequirement(name = "basicAuth")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CurrencyDto getById(@PathVariable("id") @Parameter(description = "Currency id") Integer id) {
@@ -101,7 +99,6 @@ public class CurrencyController {
 
     @Operation(summary = "Get currency by abbreviation",
             description = "Returns currency by a defined abbreviation of currency name.")
-    @SecurityRequirement(name = "basicAuth")
     @GetMapping("/abb/{abb}")
     @ResponseStatus(HttpStatus.OK)
     public CurrencyDto getCurrencyByAbb(@PathVariable("abb")

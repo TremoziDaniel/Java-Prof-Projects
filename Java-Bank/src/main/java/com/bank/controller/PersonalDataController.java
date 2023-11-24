@@ -70,7 +70,6 @@ public class PersonalDataController {
 
     @Operation(summary = "Create personal data",
             description = "Creates personal data from a request body.")
-    @SecurityRequirement(name = "basicAuth")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Long create(@RequestBody(description = "Personal data body") PersonalDataDto personalData) {

@@ -65,7 +65,6 @@ public class ClientController {
 
     @Operation(summary = "Create client",
             description = "Creates client from a request body.")
-    @SecurityRequirement(name = "basicAuth")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String create(@RequestBody(description = "Client body") ClientDto client) {
