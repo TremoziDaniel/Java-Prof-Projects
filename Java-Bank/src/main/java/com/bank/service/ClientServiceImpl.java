@@ -68,6 +68,7 @@ public class ClientServiceImpl implements ClientService {
         validateManagerStatus(manager);
         client.setId(UUID.fromString(id));
         client.setManager(manager);
+        client.setStatus(oldClient.isStatus());
         client.setPersonalData(oldClient.getPersonalData());
         client.setCreatedAt(oldClient.getCreatedAt());
         client.setUpdatedAt(LocalDateTime.now());

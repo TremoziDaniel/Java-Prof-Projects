@@ -68,6 +68,7 @@ public class AccountServiceImpl implements AccountService {
         Account oldAccount = getById(iban);
         account.setId(oldAccount.getId());
         account.setClient(oldAccount.getClient());
+        account.setStatus(oldAccount.isStatus());
         account.setBalance(oldAccount.getBalance());
         account.setCreatedAt(oldAccount.getCreatedAt());
         account.setUpdatedAt(LocalDateTime.now());
